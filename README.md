@@ -4,7 +4,7 @@
 
 **A modern, open-source cleaning tool for Windows 10/11 and Windows Server – no telemetry, no ads, no bullshit.**
 
-CLEANit finds temporary files, caches, logs and crash dumps of Windows, browsers, multimedia apps and development tools – and shows you per rule which folders, how many files and how much space are affected. **Nothing is deleted before you confirm the summary.** Rules are graded *Safe*, *Moderate* and *Deep*; only *Safe* rules are preselected, and *Deep* items (cookies, history, Windows.old …) are listed with their warnings and confirmed with a red *cannot be undone* button. A safety guard protects system folders, your libraries, credentials, browser passwords and bookmarks – whatever a rule says. On top, CLEANit manages **installed programs**, **startup entries** and **updates (winget)**, installs **software** with reusable **package bundles**, offers documented **Windows settings** with backup, **compares folders** like WinMerge, finds **duplicates**, shows **disk usage** as list, treemap, file types and a **device tree**, and checks **drive health** (NVMe/SMART). It can run in the **system tray**; admins get an optional **expert mode** (services, large files, reports, rule editor, **command line**) and a separate **server admin mode** for terminal servers, Citrix and FSLogix.
+CLEANit finds temporary files, caches, logs and crash dumps of Windows, browsers, multimedia apps and development tools and shows you per rule which folders, how many files and how much space are affected. CLEANit manages **installed programs**, **startup entries** and **updates (winget)**, installs **software** with reusable **package bundles**, offers documented **Windows settings** with backup, **compares folders** like WinMerge, finds **duplicates**, shows **disk usage** as list, treemap, file types and a **device tree**, and checks **drive health** (NVMe/SMART). It can run in the **system tray**; admins get an optional **expert mode** (services, large files, reports, rule editor, **command line**) and a separate **server admin mode** for terminal servers, Citrix and FSLogix.
 
 ![CLEANit](/preview/collage-preview-desktop1.png)
 ![CLEANit](/preview/collage-preview-desktop2.png)
@@ -12,8 +12,6 @@ CLEANit finds temporary files, caches, logs and crash dumps of Windows, browsers
 ## Highlights
 
 - **Full cleanup** — System, browsers and development in one analysis, with **selection profiles** (*Recommended*, *Daily*, *Developer workstation*, own profiles) shared by all cleanup pages.
-- **Analyze → preview → confirm** — Every cleaning run starts with an analysis. You see each rule's folders, file count, size and largest files. A summary dialog lists everything again; with Deep items it shows their warnings and the button turns red (*cannot be undone*).
-- **Three risk levels** — *Safe* (pure temp/cache data, preselected), *Moderate* (rebuild or re-download needed), *Deep* (not reversible, e.g. sign-out of all websites, no rollback to the previous Windows). Risk badges never look like buttons.
 - **System cleanup** — Temp folders, thumbnail cache, error reports, crash and memory dumps, Windows logs, Delivery Optimization and Windows Update caches, Check Disk fragments (to the recycle bin), recycle bin, component store cleanup with DISM, Windows.old – plus multimedia and GPU shader caches, Teams, Discord, Slack, Steam and more.
 - **Browser cleanup** — Edge, Chrome, Brave, Vivaldi, Chromium, Opera, Opera GX and Firefox, all profiles. Caches by default; cookies, history and last session only as Deep options. **Saved passwords, autofill data and bookmarks are never touched.**
 - **Development cleanup** — Visual Studio, VS Code, JetBrains IDEs, Android Studio, NuGet, Gradle, Android SDK, emulator snapshots, npm, Yarn, pip, Go, Cargo and Unity caches – combined on one page.
@@ -34,8 +32,6 @@ CLEANit finds temporary files, caches, logs and crash dumps of Windows, browsers
 - **System tray** — Optional start at sign-in, right-click menu for every page and quick analyses, closing the window keeps CLEANit in the tray.
 - **Built for admins** — **Expert mode** (off by default): cleaning of **all user profiles**, event logs (backed up first), a *Prepare master image (MCS/PVS)* profile, services (start, stop, set to manual with restore), large files, reports, a rule editor with live preview, winget export/import, fixed versions and *all users* installs in the catalog. **Command line** for scripts (`--analyze`, `--clean --confirm`, `--signed-out`, `--report`, `--install-bundle`). Exclusions list, portable mode.
 - **Server & terminal server** — Shown with the separate **server admin mode** (Settings → General): pages for Windows Server 2019/2022/2025, Remote Desktop Session Hosts and Citrix VDA (MCS/PVS, VDI): an **environment** overview (RDS role, sessions, FSLogix, Citrix VDA, Profile Management, provisioning), **local profiles** with size and last use – delete unused profiles through the Windows API – and a **server cleanup** for the profiles of signed-out users. FSLogix containers are never opened.
-- **Modern interface** — Dark mode by default, *Shadow*, light or *System* (follows Windows), smooth page and list animations, collapsible and scrollable sidebar (click the logo), icons on every button, English and German (chosen automatically on the first start: German when Windows uses German as display language, region or keyboard layout, otherwise English), switch without restart.
-- **Reset** — Settings → *Reset CLEANit*: delete settings, reports, caches, backups or own rules – or everything, like a new installation.
 - **Local-first** — No account, no telemetry, no online scans. Only winget (when you check for updates or use the Software page), Chocolatey (if you enable it) and the optional CLEANit release check (off by default) go online.
 
 ## Navigation
@@ -158,7 +154,6 @@ Every page with a list has a search field. The main action of a page or dialog i
 - Drive health shows what the drives report. The assessment is a warning sign, not a guarantee – keep backups of important data.
 - Expert and server features change more of the system (event logs, services, all user profiles, user profiles on servers). They are off until you enable expert mode or server admin mode; event logs and service settings are backed up before any change.
 
-More: [docs/FEATURES.md](docs/FEATURES.md) · Rules: [docs/RULES.md](docs/RULES.md) · Build: [docs/BUILD.md](docs/BUILD.md) · Changes: [docs/CHANGELOG.md](docs/CHANGELOG.md)
 
 ## Credits
 
