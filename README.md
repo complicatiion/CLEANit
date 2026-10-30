@@ -6,8 +6,8 @@
 
 CLEANit finds temporary files, caches, logs and crash dumps of Windows, browsers, multimedia apps and development tools – and shows you per rule which folders, how many files and how much space are affected. **Nothing is deleted before you confirm the summary.** Rules are graded *Safe*, *Moderate* and *Deep*; only *Safe* rules are preselected, and *Deep* items (cookies, history, Windows.old …) are listed with their warnings and confirmed with a red *cannot be undone* button. A safety guard protects system folders, your libraries, credentials, browser passwords and bookmarks – whatever a rule says. On top, CLEANit manages **installed programs**, **startup entries** and **updates (winget)**, installs **software** with reusable **package bundles**, offers documented **Windows settings** with backup, **compares folders** like WinMerge, finds **duplicates**, shows **disk usage** as list, treemap, file types and a **device tree**, and checks **drive health** (NVMe/SMART). It can run in the **system tray**; admins get an optional **expert mode** (services, large files, reports, rule editor, **command line**) and a separate **server admin mode** for terminal servers, Citrix and FSLogix.
 
-![CLEANit](/preview/preview-desktop-collage1.png)
-![CLEANit](/preview/preview-desktop-collage2.png)
+![CLEANit](/preview/collage-preview-desktop1.png)
+![CLEANit](/preview/collage-preview-desktop2.png)
 
 ## Highlights
 
