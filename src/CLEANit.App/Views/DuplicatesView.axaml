@@ -1,0 +1,157 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             xmlns:views="using:CLEANit.App.Views"
+             x:Class="CLEANit.App.Views.DuplicatesView">
+  <TabControl SelectedIndex="{Binding TabIndex}">
+
+    <!-- ============================================================ Folder comparison -->
+    <TabItem Header="{DynamicResource TabCompare}">
+      <views:FolderCompareView DataContext="{Binding Compare}" Margin="0,12,0,0" />
+    </TabItem>
+
+    <!-- ============================================================ Duplicates -->
+    <TabItem Header="{DynamicResource TabDuplicates}">
+      <DockPanel Margin="0,12,0,0">
+
+        <!-- Step 1: folders to search (drop folders here) and the scan options -->
+        <Border x:Name="FolderCard" DockPanel.Dock="Top" Classes="card" Padding="16,14" Margin="0,0,0,12" DragDrop.AllowDrop="True">
+          <StackPanel Spacing="10">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+              <PathIcon Data="{StaticResource IconFolderSearch}" Width="20" Height="20" Foreground="{DynamicResource BrushAccentText}" Margin="0,0,10,0" />
+              <TextBlock Grid.Column="1" Classes="h3" Text="{DynamicResource HdrFolders}" VerticalAlignment="Center" />
+              <Border Grid.Column="2" Classes="pill accent" Margin="0,0,10,0" IsVisible="{Binding HasRoots}">
+                <TextBlock Text="{Binding Roots.Count}" />
+              </Border>
+              <Button Grid.Column="3" Command="{Binding AddRootCommand}">
+                <ctl:IconLabel Icon="{StaticResource IconPlus}" Text="{DynamicResource BtnAddFolder}" />
+              </Button>
+            </Grid>
+
+            <!-- Empty: one big drop area -->
+            <Border Classes="droparea" IsVisible="{Binding !HasRoots}">
+              <StackPanel Spacing="6" HorizontalAlignment="Center">
+                <PathIcon Data="{StaticResource IconFolderOpen}" Width="28" Height="28" Foreground="{DynamicResource BrushTextSecondary}" HorizontalAlignment="Center" />
+                <TextBlock Classes="muted" Text="{DynamicResource DuplicatesDropHint}" TextAlignment="Center" TextWrapping="Wrap" />
+              </StackPanel>
+            </Border>
+
+            <ScrollViewer MaxHeight="168" IsVisible="{Binding HasRoots}">
+              <ItemsControl ItemsSource="{Binding Roots}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Border Classes="tablerow" Padding="8,3">
+                      <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                        <PathIcon Data="{StaticResource IconFolder}" Width="16" Height="16" Foreground="{DynamicResource BrushModerate}" Margin="0,0,10,0" />
+                        <TextBlock Grid.Column="1" Classes="mono small" Text="{Binding}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding}" />
+                        <Button Grid.Column="2" Classes="icon small" ToolTip.Tip="{DynamicResource TipOpenFolder}"
+                                Command="{Binding $parent[UserControl].DataContext.OpenRootCommand}" CommandParameter="{Binding}">
+                          <PathIcon Data="{StaticResource IconFolderOpen}" />
+                        </Button>
+                        <Button Grid.Column="3" Classes="icon small delete" ToolTip.Tip="{DynamicResource TipRemove}"
+                                Command="{Binding $parent[UserControl].DataContext.RemoveRootCommand}" CommandParameter="{Binding}">
+                          <PathIcon Data="{StaticResource IconClose}" />
+                        </Button>
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+
+            <Border Classes="divider" />
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+              <TextBlock Classes="muted small" Text="{DynamicResource DuplicatesDropMore}" VerticalAlignment="Center" TextWrapping="Wrap" IsVisible="{Binding HasRoots}" />
+              <TextBlock Grid.Column="1" Classes="muted" Text="{DynamicResource LblMinSizeMb}" VerticalAlignment="Center" Margin="12,0,8,0" />
+              <NumericUpDown Grid.Column="2" Value="{Binding MinMb}" Minimum="0" Maximum="100000" Increment="1" FormatString="0" Width="120" />
+              <Button Grid.Column="3" Classes="primary" Margin="10,0,0,0" Command="{Binding ScanCommand}">
+                <ctl:IconLabel Icon="{StaticResource IconAnalyze}" Text="{DynamicResource BtnScan}" />
+              </Button>
+            </Grid>
+          </StackPanel>
+        </Border>
+
+        <!-- Selection helpers -->
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,10" IsVisible="{Binding HasGroups}">
+          <Button Command="{Binding KeepOldestCommand}" ToolTip.Tip="{DynamicResource TipKeepOldest}">
+            <ctl:IconLabel Icon="{StaticResource IconSortAsc}" Text="{DynamicResource BtnKeepOldest}" />
+          </Button>
+          <Button Command="{Binding KeepNewestCommand}" ToolTip.Tip="{DynamicResource TipKeepNewest}">
+            <ctl:IconLabel Icon="{StaticResource IconSortDesc}" Text="{DynamicResource BtnKeepNewest}" />
+          </Button>
+          <Button Classes="icon" Command="{Binding SelectNoneCommand}" ToolTip.Tip="{DynamicResource TipSelectNone}">
+            <PathIcon Data="{StaticResource IconSelectNone}" />
+          </Button>
+        </StackPanel>
+
+        <!-- Action bar -->
+        <Border DockPanel.Dock="Bottom" Classes="card" Padding="16,12" Margin="0,12,0,0">
+          <Grid ColumnDefinitions="*,Auto">
+            <StackPanel VerticalAlignment="Center" Spacing="4">
+              <TextBlock Text="{Binding SummaryText}" FontWeight="SemiBold" TextWrapping="Wrap" />
+              <TextBlock Classes="muted small" Text="{Binding ModeText}" TextWrapping="Wrap" />
+              <StackPanel Spacing="4" IsVisible="{Binding IsBusy}">
+                <ProgressBar Value="{Binding Progress}" IsIndeterminate="{Binding IsIndeterminate}" Maximum="100" />
+                <TextBlock Classes="muted small" Text="{Binding Status}" TextTrimming="CharacterEllipsis" />
+              </StackPanel>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" Margin="16,0,0,0">
+              <Button Classes="fixed cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}">
+                <ctl:IconLabel Icon="{StaticResource IconCancel}" Text="{DynamicResource BtnCancel}" />
+              </Button>
+              <Button Classes="danger fixed" Command="{Binding DeleteCommand}">
+                <ctl:IconLabel Icon="{StaticResource IconDelete}" Text="{DynamicResource BtnDeleteSelected}" />
+              </Button>
+            </StackPanel>
+          </Grid>
+        </Border>
+
+        <Grid>
+          <TextBlock Classes="muted" Text="{DynamicResource DuplicatesEmpty}" IsVisible="{Binding !HasGroups}" HorizontalAlignment="Center" Margin="0,30" TextWrapping="Wrap" />
+          <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding Groups}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Expander IsExpanded="{Binding IsExpanded}" Margin="0,0,0,6">
+                    <Expander.Header>
+                      <Grid ColumnDefinitions="Auto,*,Auto">
+                        <PathIcon Data="{StaticResource IconDuplicate}" Width="16" Height="16" Foreground="{DynamicResource BrushAccentText}" Margin="0,0,10,0" />
+                        <TextBlock Grid.Column="1" Text="{Binding Header}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+                          <Border Classes="badge moderate" IsVisible="{Binding !KeepsOne}">
+                            <TextBlock Text="{DynamicResource BadgeKeepsOldest}" />
+                          </Border>
+                          <TextBlock Classes="mono small muted" Text="{Binding HashText}" VerticalAlignment="Center" />
+                        </StackPanel>
+                      </Grid>
+                    </Expander.Header>
+                    <ItemsControl ItemsSource="{Binding Files}">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                          <Border Classes="tablerow">
+                            <Grid ColumnDefinitions="36,*,110,44">
+                              <CheckBox IsChecked="{Binding IsChecked}" VerticalAlignment="Center" />
+                              <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0">
+                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Classes="mono small muted" Text="{Binding Folder}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Folder}" />
+                              </StackPanel>
+                              <TextBlock Grid.Column="2" Classes="muted" Text="{Binding Modified}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                              <Button Grid.Column="3" Classes="icon small" HorizontalAlignment="Right" ToolTip.Tip="{DynamicResource TipOpenFolder}"
+                                      Command="{Binding $parent[UserControl].DataContext.OpenFolderCommand}" CommandParameter="{Binding}">
+                                <PathIcon Data="{StaticResource IconFolderOpen}" />
+                              </Button>
+                            </Grid>
+                          </Border>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </Expander>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Grid>
+      </DockPanel>
+    </TabItem>
+  </TabControl>
+</UserControl>

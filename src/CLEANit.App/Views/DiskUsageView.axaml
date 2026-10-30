@@ -1,0 +1,191 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             x:Class="CLEANit.App.Views.DiskUsageView">
+  <DockPanel>
+
+    <!-- Drives: equal tiles over the full width, flush right with the toolbar below -->
+    <ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding Drives}" Margin="0,0,-12,10">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <UniformGrid Columns="{Binding $parent[UserControl].DataContext.DriveColumns}" />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <Border Classes="card" Padding="16,14" Margin="0,0,12,12">
+            <StackPanel Spacing="8">
+              <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                <PathIcon Data="{StaticResource IconHarddisk}" Width="20" Height="20" Foreground="{DynamicResource BrushCatSystem}" Margin="0,0,10,0" />
+                <TextBlock Grid.Column="1" Classes="h3" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                <Button Grid.Column="2" Classes="icon" ToolTip.Tip="{DynamicResource TipOpenDriveHealth}" Margin="0,0,2,0"
+                        Command="{Binding $parent[UserControl].DataContext.OpenDriveHealthCommand}">
+                  <PathIcon Data="{StaticResource IconHealth}" />
+                </Button>
+                <Button Grid.Column="3" Classes="icon" ToolTip.Tip="{DynamicResource BtnAnalyze}"
+                        Command="{Binding $parent[UserControl].DataContext.AnalyzeDriveCommand}" CommandParameter="{Binding}">
+                  <PathIcon Data="{StaticResource IconAnalyze}" />
+                </Button>
+              </Grid>
+              <ProgressBar Classes="usage" Value="{Binding UsedPercent}" Maximum="100" />
+              <TextBlock Classes="muted small" Classes.deep="{Binding IsLow}" Text="{Binding FreeText}" />
+            </StackPanel>
+          </Border>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+    <!-- Path toolbar -->
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto,Auto,Auto" Margin="0,0,0,10">
+      <Button Classes="icon" Command="{Binding UpCommand}" IsEnabled="{Binding CanGoUp}" ToolTip.Tip="{DynamicResource TipUp}">
+        <PathIcon Data="{StaticResource IconArrowUp}" />
+      </Button>
+      <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0">
+        <TextBlock Classes="mono" Text="{Binding CurrentPath}" TextTrimming="CharacterEllipsis" />
+        <TextBlock Classes="muted small" Text="{Binding TotalText}" />
+      </StackPanel>
+      <Button Grid.Column="2" Classes="fixed cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}" Margin="0,0,12,0">
+        <ctl:IconLabel Icon="{StaticResource IconCancel}" Text="{DynamicResource BtnCancel}" />
+      </Button>
+      <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="4" Margin="0,0,12,0" VerticalAlignment="Center">
+        <Button Classes="icon" Classes.active="{Binding IsListMode}" Command="{Binding SetModeCommand}" CommandParameter="List"
+                ToolTip.Tip="{DynamicResource TipModeList}">
+          <PathIcon Data="{StaticResource IconList}" />
+        </Button>
+        <Button Classes="icon" Classes.active="{Binding IsTreemapMode}" Command="{Binding SetModeCommand}" CommandParameter="Treemap"
+                ToolTip.Tip="{DynamicResource TipModeTreemap}">
+          <Button.ContextMenu>
+            <ContextMenu>
+              <MenuItem Header="{DynamicResource MenuExportTreemap}" Click="OnExportTreemap">
+                <MenuItem.Icon>
+                  <PathIcon Data="{StaticResource IconImageExport}" />
+                </MenuItem.Icon>
+              </MenuItem>
+            </ContextMenu>
+          </Button.ContextMenu>
+          <PathIcon Data="{StaticResource IconTreemap}" />
+        </Button>
+        <Button Classes="icon" Classes.active="{Binding IsTypesMode}" Command="{Binding SetModeCommand}" CommandParameter="Types"
+                ToolTip.Tip="{DynamicResource TipModeTypes}">
+          <PathIcon Data="{StaticResource IconFileType}" />
+        </Button>
+      </StackPanel>
+      <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="8">
+        <Button Classes="fixed" Command="{Binding ShowInExplorerCommand}" IsEnabled="{Binding HasPath}">
+          <ctl:IconLabel Icon="{StaticResource IconOpenInNew}" Text="{DynamicResource BtnExplorer}" />
+        </Button>
+        <Button Classes="fixed" Command="{Binding BrowseCommand}">
+          <ctl:IconLabel Icon="{StaticResource IconFolderOpen}" Text="{DynamicResource BtnChooseFolder}" />
+        </Button>
+      </StackPanel>
+    </Grid>
+
+    <StackPanel DockPanel.Dock="Top" Spacing="4" IsVisible="{Binding IsBusy}" Margin="0,0,0,8">
+      <ProgressBar IsIndeterminate="True" />
+      <TextBlock Classes="muted small" Text="{Binding Status}" TextTrimming="CharacterEllipsis" />
+    </StackPanel>
+
+    <Grid>
+      <!-- List -->
+      <DockPanel IsVisible="{Binding IsListMode}">
+        <Border DockPanel.Dock="Top" Classes="tablehead">
+          <Grid ColumnDefinitions="2.5*,1.5*,110,90,110,80">
+            <TextBlock Classes="section column" Text="{DynamicResource ColName}" />
+            <TextBlock Grid.Column="1" Classes="section column" Text="{DynamicResource ColShare}" />
+            <TextBlock Grid.Column="2" Classes="section column" Text="{DynamicResource ColSize}" HorizontalAlignment="Right" />
+            <TextBlock Grid.Column="3" Classes="section column" Text="{DynamicResource ColFiles}" HorizontalAlignment="Right" />
+            <TextBlock Grid.Column="4" Classes="section column" Text="{DynamicResource ColModified}" HorizontalAlignment="Right" />
+          </Grid>
+        </Border>
+        <Grid>
+          <TextBlock Classes="muted" Text="{DynamicResource DiskEmpty}" IsVisible="{Binding !HasRows}" HorizontalAlignment="Center" Margin="0,30" />
+          <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding Rows}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border Classes="tablerow">
+                    <Grid ColumnDefinitions="2.5*,1.5*,110,90,110,80">
+                      <Button Classes="row" Command="{Binding $parent[UserControl].DataContext.OpenCommand}" CommandParameter="{Binding}"
+                              IsEnabled="{Binding IsFolder}" ToolTip.Tip="{DynamicResource TipDrillDown}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                          <PathIcon Data="{StaticResource IconFolder}" Width="16" Height="16" Foreground="{DynamicResource BrushModerate}" IsVisible="{Binding IsFolder}" />
+                          <PathIcon Data="{StaticResource IconFile}" Width="16" Height="16" Foreground="{DynamicResource BrushTextSecondary}" IsVisible="{Binding !IsFolder}" />
+                          <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                        </StackPanel>
+                      </Button>
+                      <Grid Grid.Column="1" ColumnDefinitions="*,60" VerticalAlignment="Center" Margin="0,0,10,0">
+                        <ProgressBar Classes="usage" Value="{Binding Percent}" Maximum="100" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="muted small" Text="{Binding PercentText}" HorizontalAlignment="Right" />
+                      </Grid>
+                      <TextBlock Grid.Column="2" Text="{Binding Size}" FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="3" Classes="muted" Text="{Binding Files}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="4" Classes="muted" Text="{Binding Modified}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                      <Button Grid.Column="5" Classes="icon small" HorizontalAlignment="Right" ToolTip.Tip="{DynamicResource BtnExplorer}"
+                              Command="{Binding $parent[UserControl].DataContext.ShowInExplorerCommand}" CommandParameter="{Binding}">
+                        <PathIcon Data="{StaticResource IconOpenInNew}" />
+                      </Button>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Grid>
+      </DockPanel>
+
+      <!-- Treemap: click a folder to open it; right click: export as image -->
+      <Border Classes="card" Padding="8" IsVisible="{Binding IsTreemapMode}">
+        <Border.ContextMenu>
+          <ContextMenu>
+            <MenuItem Header="{DynamicResource MenuExportTreemap}" Click="OnExportTreemap">
+              <MenuItem.Icon>
+                <PathIcon Data="{StaticResource IconImageExport}" />
+              </MenuItem.Icon>
+            </MenuItem>
+          </ContextMenu>
+        </Border.ContextMenu>
+        <Grid>
+          <TextBlock Classes="muted" Text="{DynamicResource DiskEmpty}" IsVisible="{Binding !HasRows}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+          <ctl:TreemapControl x:Name="Treemap" Items="{Binding Rows}" Command="{Binding OpenCommand}" />
+        </Grid>
+      </Border>
+
+      <!-- File types -->
+      <DockPanel IsVisible="{Binding IsTypesMode}">
+        <Border DockPanel.Dock="Top" Classes="tablehead">
+          <Grid ColumnDefinitions="1.2*,2*,110,110">
+            <TextBlock Classes="section column" Text="{DynamicResource ColFileType}" />
+            <TextBlock Grid.Column="1" Classes="section column" Text="{DynamicResource ColShare}" />
+            <TextBlock Grid.Column="2" Classes="section column" Text="{DynamicResource ColSize}" HorizontalAlignment="Right" />
+            <TextBlock Grid.Column="3" Classes="section column" Text="{DynamicResource ColFiles}" HorizontalAlignment="Right" />
+          </Grid>
+        </Border>
+        <Grid>
+          <TextBlock Classes="muted" Text="{DynamicResource DiskTypesEmpty}" IsVisible="{Binding !HasTypes}" HorizontalAlignment="Center" Margin="0,30" />
+          <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding Types}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border Classes="tablerow">
+                    <Grid ColumnDefinitions="1.2*,2*,110,110">
+                      <StackPanel Orientation="Horizontal" Spacing="10">
+                        <PathIcon Data="{StaticResource IconFileType}" Width="16" Height="16" Foreground="{DynamicResource BrushAccentText}" />
+                        <TextBlock Classes="mono" Text="{Binding Name}" VerticalAlignment="Center" />
+                      </StackPanel>
+                      <Grid Grid.Column="1" ColumnDefinitions="*,60" VerticalAlignment="Center" Margin="0,0,10,0">
+                        <ProgressBar Classes="usage" Value="{Binding Percent}" Maximum="100" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Classes="muted small" Text="{Binding PercentText}" HorizontalAlignment="Right" />
+                      </Grid>
+                      <TextBlock Grid.Column="2" Text="{Binding Size}" FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="3" Classes="muted" Text="{Binding Files}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Grid>
+      </DockPanel>
+    </Grid>
+  </DockPanel>
+</UserControl>

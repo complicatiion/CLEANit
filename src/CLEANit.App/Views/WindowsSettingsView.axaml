@@ -1,0 +1,140 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             x:Class="CLEANit.App.Views.WindowsSettingsView">
+  <DockPanel>
+
+    <Border DockPanel.Dock="Top" Classes="notice moderate" Margin="0,0,0,10" IsVisible="{Binding IsDomainJoined}">
+      <Grid ColumnDefinitions="Auto,*">
+        <PathIcon Data="{StaticResource IconAlert}" Width="18" Height="18" Foreground="{DynamicResource BrushModerate}" Margin="0,0,10,0" VerticalAlignment="Top" />
+        <TextBlock Grid.Column="1" Text="{DynamicResource TweaksDomainNote}" TextWrapping="Wrap" />
+      </Grid>
+    </Border>
+
+    <!-- Toolbar -->
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,10">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Classes="primary" Command="{Binding SelectRecommendedCommand}" ToolTip.Tip="{DynamicResource TipTweaksRecommended}">
+          <ctl:IconLabel Icon="{StaticResource IconRecommended}" Text="{DynamicResource BtnRecommended}" />
+        </Button>
+        <Button Classes="icon" Command="{Binding SelectAllCommand}" ToolTip.Tip="{DynamicResource TipSelectAll}">
+          <PathIcon Data="{StaticResource IconSelectAll}" />
+        </Button>
+        <Button Classes="icon" Command="{Binding SelectNoneCommand}" ToolTip.Tip="{DynamicResource TipSelectNone}">
+          <PathIcon Data="{StaticResource IconSelectNone}" />
+        </Button>
+      </StackPanel>
+      <!-- Filter pills: same labels as the badges of the entries -->
+      <!-- Reset (left, only while filtered) · filter symbol · chips in the colours of the entry badges -->
+      <WrapPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="12,0">
+        <Button Classes="icon small" Command="{Binding ClearFilterCommand}" IsVisible="{Binding IsFiltered}" ToolTip.Tip="{DynamicResource TipClearFilter}"
+                VerticalAlignment="Center" Margin="0,0,4,0">
+          <PathIcon Data="{StaticResource IconClose}" />
+        </Button>
+        <PathIcon Data="{StaticResource IconFilterVariant}" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center"
+                  Foreground="{DynamicResource BrushTextSecondary}" />
+        <ToggleButton Classes="chip accent" IsChecked="{Binding FilterRecommended}" Content="{DynamicResource BtnRecommended}" Margin="0,2,6,2" />
+        <ToggleButton Classes="chip safe" IsChecked="{Binding FilterSafe}" Content="{DynamicResource RiskSafe}" Margin="0,2,6,2" />
+        <ToggleButton Classes="chip moderate" IsChecked="{Binding FilterModerate}" Content="{DynamicResource RiskModerate}" Margin="0,2,6,2"
+                      IsVisible="{Binding HasModerate}" />
+        <ToggleButton Classes="chip info" IsChecked="{Binding FilterPolicy}" Content="{DynamicResource TweakSourcePolicy}" Margin="0,2,6,2" />
+        <ToggleButton Classes="chip" IsChecked="{Binding FilterSettings}" Content="{DynamicResource TweakSourceSettings}" Margin="0,2,6,2" />
+        <ToggleButton Classes="chip safe" IsChecked="{Binding FilterApplied}" Content="{DynamicResource TweakFilterApplied}" Margin="0,2,6,2" />
+        <ToggleButton Classes="chip moderate" IsChecked="{Binding FilterPending}" Content="{DynamicResource TweakFilterPending}" Margin="0,2,6,2" />
+      </WrapPanel>
+      <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+        <Border Classes="pill neutral">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <PathIcon Data="{StaticResource IconSystem}" Width="13" Height="13" />
+            <TextBlock Text="{Binding SystemText}" />
+          </StackPanel>
+        </Border>
+        <Button Classes="primary" Command="{Binding RefreshCommand}">
+          <ctl:IconLabel Icon="{StaticResource IconRefresh}" Text="{DynamicResource BtnRefresh}" />
+        </Button>
+      </StackPanel>
+    </Grid>
+
+    <!-- Action bar -->
+    <Border DockPanel.Dock="Bottom" Classes="card" Padding="16,12" Margin="0,12,0,0">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel VerticalAlignment="Center" Spacing="4">
+          <TextBlock Text="{Binding PendingText}" FontWeight="SemiBold" TextWrapping="Wrap" />
+          <TextBlock Classes="muted small" Text="{DynamicResource TweaksBackupNote}" TextWrapping="Wrap" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="16,0,0,0" VerticalAlignment="Center">
+          <Button Classes="fixed" Command="{Binding DiscardCommand}">
+            <ctl:IconLabel Icon="{StaticResource IconUndo}" Text="{DynamicResource BtnDiscard}" />
+          </Button>
+          <Button Classes="primary fixed" Command="{Binding ApplyCommand}">
+            <ctl:IconLabel Icon="{StaticResource IconCheck}" Text="{DynamicResource BtnApply}" />
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Grid>
+    <TextBlock Classes="muted" Text="{DynamicResource TweaksNoMatch}" IsVisible="{Binding !HasVisible}" HorizontalAlignment="Center" Margin="0,30" />
+    <ScrollViewer>
+      <ItemsControl ItemsSource="{Binding Groups}" Grid.IsSharedSizeScope="True">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Spacing="6" Margin="0,0,0,14">
+              <TextBlock Classes="h2" Text="{Binding Section}" IsVisible="{Binding HasSection}" Margin="2,4,0,6" />
+              <TextBlock Classes="section" Text="{Binding Name}" Margin="4,0,0,0" />
+              <ItemsControl ItemsSource="{Binding Items}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Border Classes="card" Classes.pending="{Binding IsPending}" Padding="16,12" Margin="0,0,0,8">
+                      <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Spacing="4">
+                          <WrapPanel>
+                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Margin="0,0,10,4" VerticalAlignment="Center" />
+                            <Border Classes="badge" Classes.safe="{Binding IsSafe}" Classes.moderate="{Binding IsModerate}" Classes.deep="{Binding IsDeep}"
+                                    Margin="0,0,6,4">
+                              <TextBlock Text="{Binding RiskText}" />
+                            </Border>
+                            <Border Classes="badge accent" IsVisible="{Binding IsRecommended}" Margin="0,0,6,4">
+                              <TextBlock Text="{DynamicResource BtnRecommended}" />
+                            </Border>
+                            <Border Classes="badge info" Margin="0,0,6,4">
+                              <TextBlock Text="{Binding SourceText}" />
+                            </Border>
+                            <Border Classes="badge" IsVisible="{Binding HasEffect}" Margin="0,0,6,4">
+                              <TextBlock Text="{Binding EffectText}" />
+                            </Border>
+                            <Border Classes="badge moderate" IsVisible="{Binding ChangedElsewhere}" Margin="0,0,6,4" ToolTip.Tip="{DynamicResource TipChangedElsewhere}">
+                              <TextBlock Text="{DynamicResource BadgeChangedElsewhere}" />
+                            </Border>
+                          </WrapPanel>
+                          <TextBlock Classes="muted" Text="{Binding Description}" TextWrapping="Wrap" />
+                          <TextBlock Classes="small warning" Text="{Binding Note}" IsVisible="{Binding HasNote}" TextWrapping="Wrap" />
+                          <!-- Values column shares its width across all entries: the documentation link sits at the same position in every card -->
+                          <Grid Margin="0,2,0,0">
+                            <Grid.ColumnDefinitions>
+                              <ColumnDefinition Width="Auto" SharedSizeGroup="TweakValues" />
+                              <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Classes="mono small muted" Text="{Binding Values}" TextWrapping="Wrap" MaxWidth="620" VerticalAlignment="Center"
+                                       Margin="0,0,16,0" />
+                            <Button Grid.Column="1" Classes="link" Command="{Binding $parent[UserControl].DataContext.OpenDocsCommand}" CommandParameter="{Binding}"
+                                    VerticalAlignment="Top">
+                              <ctl:IconLabel Icon="{StaticResource IconOpenInNew}" Text="{DynamicResource BtnDocs}" />
+                            </Button>
+                          </Grid>
+                        </StackPanel>
+                        <ToggleSwitch Grid.Column="1" IsChecked="{Binding Wanted}" OnContent="" OffContent="" MinWidth="0" VerticalAlignment="Center"
+                                      Margin="16,0,0,0" />
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+    </Grid>
+  </DockPanel>
+</UserControl>

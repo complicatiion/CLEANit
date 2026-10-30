@@ -1,0 +1,109 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             x:Class="CLEANit.App.Views.ServicesView">
+  <DockPanel>
+
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,Auto,Auto" Margin="0,0,0,12">
+      <TextBox Text="{Binding Search}" Watermark="{DynamicResource WatermarkSearchServices}" MaxWidth="380" HorizontalAlignment="Left" MinWidth="220">
+        <TextBox.InnerLeftContent>
+          <PathIcon Data="{StaticResource IconMagnify}" Width="16" Height="16" Margin="10,0,0,0" Opacity="0.7" />
+        </TextBox.InnerLeftContent>
+      </TextBox>
+      <!-- Windows' own services stay hidden unless switched on (default off) -->
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" Margin="12,0,12,0" VerticalAlignment="Center">
+        <TextBlock Text="{DynamicResource LblShowWindowsServices}" VerticalAlignment="Center" />
+        <ToggleSwitch IsChecked="{Binding ShowMicrosoft}" OnContent="" OffContent="" MinWidth="0" VerticalAlignment="Center" />
+      </StackPanel>
+      <Button Grid.Column="2" Margin="0,0,8,0" IsEnabled="{Binding HasBackups}">
+        <ctl:IconLabel Icon="{StaticResource IconRestore}" Text="{DynamicResource BtnRestoreServices}" />
+        <Button.Flyout>
+          <Flyout Placement="BottomEdgeAlignedRight">
+            <StackPanel Spacing="6" MinWidth="380" MaxHeight="420">
+              <TextBlock Classes="h3" Text="{DynamicResource HdrServiceBackups}" />
+              <ScrollViewer>
+                <ItemsControl ItemsSource="{Binding Backups}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <Grid ColumnDefinitions="*,Auto" Margin="0,2">
+                        <TextBlock Text="{Binding Text}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,10,0" />
+                        <Button Grid.Column="1" Command="{Binding $parent[UserControl].DataContext.RestoreCommand}" CommandParameter="{Binding}">
+                          <ctl:IconLabel Icon="{StaticResource IconUndo}" Text="{DynamicResource BtnRestore}" />
+                        </Button>
+                      </Grid>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </ScrollViewer>
+            </StackPanel>
+          </Flyout>
+        </Button.Flyout>
+      </Button>
+      <Button Grid.Column="3" Classes="primary" Command="{Binding RefreshCommand}" IsEnabled="{Binding !IsBusy}">
+        <ctl:IconLabel Icon="{StaticResource IconRefresh}" Text="{DynamicResource BtnRefresh}" />
+      </Button>
+    </Grid>
+
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+      <ProgressBar IsIndeterminate="True" Width="160" HorizontalAlignment="Left" IsVisible="{Binding IsBusy}" />
+      <Border Grid.Column="1" Classes="pill accent">
+        <TextBlock Text="{Binding CountText}" />
+      </Border>
+    </Grid>
+
+    <Border DockPanel.Dock="Top" Classes="tablehead">
+      <Grid ColumnDefinitions="2*,1.4*,1.2*,110,96">
+        <TextBlock Classes="section column" Text="{DynamicResource ColService}" />
+        <TextBlock Grid.Column="1" Classes="section column" Text="{DynamicResource ColPublisher}" />
+        <TextBlock Grid.Column="2" Classes="section column" Text="{DynamicResource ColStartType}" />
+        <TextBlock Grid.Column="3" Classes="section column" Text="{DynamicResource ColState}" />
+        <TextBlock Grid.Column="4" Classes="section column" Text="{DynamicResource ColActions}" HorizontalAlignment="Right" />
+      </Grid>
+    </Border>
+    <ScrollViewer>
+      <ItemsControl ItemsSource="{Binding Rows}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Border Classes="tablerow">
+              <Grid ColumnDefinitions="2*,1.4*,1.2*,110,96">
+                <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
+                  <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Path}" />
+                  <TextBlock Classes="mono small muted" Text="{Binding ServiceName}" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+                <!-- Publisher left, the "Unsigned" badge always at the right edge of the column (same position in every row) -->
+                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" VerticalAlignment="Center" Margin="0,0,12,0">
+                  <TextBlock Classes="muted" Text="{Binding Publisher}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"
+                             ToolTip.Tip="{Binding Publisher}" Margin="0,0,8,0" />
+                  <Border Grid.Column="1" Classes="badge moderate" IsVisible="{Binding IsUnsigned}" VerticalAlignment="Center">
+                    <TextBlock Text="{DynamicResource BadgeUnsigned}" />
+                  </Border>
+                </Grid>
+                <TextBlock Grid.Column="2" Text="{Binding StartText}" VerticalAlignment="Center" />
+                <Border Grid.Column="3" Classes="badge" Classes.safe="{Binding IsRunning}" HorizontalAlignment="Left">
+                  <TextBlock Text="{Binding State}" />
+                </Border>
+                <!-- Fixed slots: start or stop · set to manual -->
+                <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                  <Panel Width="28">
+                    <Button Classes="icon small" ToolTip.Tip="{DynamicResource TipServiceStart}" IsVisible="{Binding CanStart}"
+                            Command="{Binding $parent[UserControl].DataContext.StartCommand}" CommandParameter="{Binding}">
+                      <PathIcon Data="{StaticResource IconPlay}" />
+                    </Button>
+                    <Button Classes="icon small" ToolTip.Tip="{Binding StopTip}" ToolTip.ShowOnDisabled="True" IsVisible="{Binding IsRunning}" IsEnabled="{Binding CanStop}"
+                            Command="{Binding $parent[UserControl].DataContext.StopCommand}" CommandParameter="{Binding}">
+                      <PathIcon Data="{StaticResource IconStop}" />
+                    </Button>
+                  </Panel>
+                  <Button Classes="icon small" ToolTip.Tip="{DynamicResource BtnSetManual}"
+                          Command="{Binding $parent[UserControl].DataContext.SetManualCommand}" CommandParameter="{Binding}">
+                    <PathIcon Data="{StaticResource IconManual}" />
+                  </Button>
+                </StackPanel>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

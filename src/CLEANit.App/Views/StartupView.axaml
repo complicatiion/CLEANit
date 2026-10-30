@@ -1,0 +1,132 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             x:Class="CLEANit.App.Views.StartupView">
+  <DockPanel>
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,Auto,Auto" Margin="0,0,0,12">
+      <TextBox Text="{Binding Search}" Watermark="{DynamicResource WatermarkSearchStartup}" MaxWidth="380" HorizontalAlignment="Left" MinWidth="220">
+        <TextBox.InnerLeftContent>
+          <PathIcon Data="{StaticResource IconMagnify}" Width="16" Height="16" Margin="10,0,0,0" Opacity="0.7" />
+        </TextBox.InnerLeftContent>
+      </TextBox>
+      <Button Grid.Column="1" Margin="12,0,8,0" IsEnabled="{Binding HasBackups}">
+        <ctl:IconLabel Icon="{StaticResource IconRestore}" Text="{DynamicResource BtnRestoreDeleted}" />
+        <Button.Flyout>
+          <Flyout Placement="BottomEdgeAlignedRight">
+            <StackPanel Spacing="6" MinWidth="360" MaxHeight="420">
+              <TextBlock Classes="h3" Text="{DynamicResource HdrStartupBackups}" />
+              <ScrollViewer>
+                <ItemsControl ItemsSource="{Binding Backups}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <Grid ColumnDefinitions="*,Auto" Margin="0,2">
+                        <TextBlock Text="{Binding Text}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,10,0" />
+                        <Button Grid.Column="1" Command="{Binding $parent[UserControl].DataContext.RestoreCommand}" CommandParameter="{Binding}">
+                          <ctl:IconLabel Icon="{StaticResource IconUndo}" Text="{DynamicResource BtnRestore}" />
+                        </Button>
+                      </Grid>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </ScrollViewer>
+            </StackPanel>
+          </Flyout>
+        </Button.Flyout>
+      </Button>
+      <Button Grid.Column="2" Margin="0,0,8,0" Command="{Binding AddCommand}">
+        <ctl:IconLabel Icon="{StaticResource IconPlus}" Text="{DynamicResource BtnAddStartup}" />
+      </Button>
+      <Button Grid.Column="3" Classes="primary" Command="{Binding RefreshCommand}" IsEnabled="{Binding !IsBusy}">
+        <ctl:IconLabel Icon="{StaticResource IconRefresh}" Text="{DynamicResource BtnRefresh}" />
+      </Button>
+    </Grid>
+
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+      <ProgressBar IsIndeterminate="True" Width="160" HorizontalAlignment="Left" IsVisible="{Binding IsBusy}" />
+      <Border Grid.Column="1" Classes="pill accent">
+        <TextBlock Text="{Binding CountText}" />
+      </Border>
+    </Grid>
+
+    <Grid>
+      <TextBlock Classes="muted" Text="{DynamicResource StartupEmpty}" IsVisible="{Binding !HasRows}" HorizontalAlignment="Center" Margin="0,40" />
+      <DataGrid ItemsSource="{Binding Rows}" IsVisible="{Binding HasRows}">
+        <DataGrid.Columns>
+          <DataGridTemplateColumn Width="80" SortMemberPath="IsEnabled">
+            <DataGridTemplateColumn.Header>
+              <TextBlock Text="{DynamicResource ColEnabled}" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <ToggleSwitch IsChecked="{Binding IsEnabled}" OnContent="" OffContent="" VerticalAlignment="Center" MinWidth="0" />
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Width="2.2*" SortMemberPath="Name">
+            <DataGridTemplateColumn.Header>
+              <TextBlock Text="{DynamicResource ColEntry}" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
+                  <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                    <Border Classes="badge deep" IsVisible="{Binding TargetMissing}">
+                      <TextBlock Text="{DynamicResource BadgeMissing}" />
+                    </Border>
+                  </StackPanel>
+                  <TextBlock Classes="muted small mono" Text="{Binding Command}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Command}" />
+                </StackPanel>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Width="160" SortMemberPath="LocationText">
+            <DataGridTemplateColumn.Header>
+              <TextBlock Text="{DynamicResource ColLocation}" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <Border Classes="badge" HorizontalAlignment="Left" VerticalAlignment="Center">
+                  <TextBlock Text="{Binding LocationText}" />
+                </Border>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Width="1.4*" SortMemberPath="Publisher">
+            <DataGridTemplateColumn.Header>
+              <TextBlock Text="{DynamicResource ColPublisher}" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                  <PathIcon Data="{StaticResource IconShieldCheck}" Width="15" Height="15" Foreground="{DynamicResource BrushSafe}" IsVisible="{Binding Signed}"
+                            ToolTip.Tip="{DynamicResource TipSigned}" />
+                  <TextBlock Text="{Binding Publisher}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                </StackPanel>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Width="90" CanUserSort="False" CanUserReorder="False">
+            <DataGridTemplateColumn.Header>
+              <TextBlock Text="{DynamicResource ColActions}" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                  <Button Classes="icon small" ToolTip.Tip="{DynamicResource MenuOpenLocation}"
+                          Command="{Binding $parent[UserControl].DataContext.OpenLocationCommand}" CommandParameter="{Binding}">
+                    <PathIcon Data="{StaticResource IconFolderOpen}" />
+                  </Button>
+                  <Button Classes="icon small delete" ToolTip.Tip="{DynamicResource BtnDelete}"
+                          Command="{Binding $parent[UserControl].DataContext.DeleteCommand}" CommandParameter="{Binding}">
+                    <PathIcon Data="{StaticResource IconDelete}" />
+                  </Button>
+                </StackPanel>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+    </Grid>
+  </DockPanel>
+</UserControl>

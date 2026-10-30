@@ -1,0 +1,141 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             x:Class="CLEANit.App.Views.ProgramsView">
+  <DockPanel>
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,Auto" Margin="0,0,0,12">
+      <TextBox Text="{Binding Search}" Watermark="{DynamicResource WatermarkSearchPrograms}" MaxWidth="380" HorizontalAlignment="Left" MinWidth="220">
+        <TextBox.InnerLeftContent>
+          <PathIcon Data="{StaticResource IconMagnify}" Width="16" Height="16" Margin="10,0,0,0" Opacity="0.7" />
+        </TextBox.InnerLeftContent>
+      </TextBox>
+      <ComboBox Grid.Column="1" ItemsSource="{Binding Filters}" SelectedIndex="{Binding FilterIndex}" MinWidth="170" Margin="12,0,8,0" />
+      <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+        <Button Classes="icon" Command="{Binding ExportCsvCommand}" ToolTip.Tip="{DynamicResource BtnExportCsv}">
+          <PathIcon Data="{StaticResource IconCsv}" />
+        </Button>
+        <Button Classes="primary" Command="{Binding RefreshCommand}" IsEnabled="{Binding !IsBusy}">
+          <ctl:IconLabel Icon="{StaticResource IconRefresh}" Text="{DynamicResource BtnRefresh}" />
+        </Button>
+      </StackPanel>
+    </Grid>
+
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsBusy}">
+        <ProgressBar IsIndeterminate="True" Width="160" VerticalAlignment="Center" />
+        <TextBlock Classes="muted small" Text="{Binding Status}" VerticalAlignment="Center" />
+      </StackPanel>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+        <Border Classes="pill neutral" IsVisible="{Binding HasCacheText}">
+          <TextBlock Text="{Binding CacheText}" />
+        </Border>
+        <Border Classes="pill accent">
+          <TextBlock Text="{Binding CountText}" />
+        </Border>
+      </StackPanel>
+    </Grid>
+
+    <!-- Columns can be moved, resized and sorted by clicking the header -->
+    <DataGrid ItemsSource="{Binding Rows}">
+      <DataGrid.Columns>
+        <DataGridTemplateColumn Width="2.4*" SortMemberPath="Name">
+          <DataGridTemplateColumn.Header>
+            <TextBlock Text="{DynamicResource ColProgram}" />
+          </DataGridTemplateColumn.Header>
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
+                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Name}" />
+                <TextBlock Classes="muted small" Text="{Binding Publisher}" TextTrimming="CharacterEllipsis" />
+              </StackPanel>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTextColumn Binding="{Binding Version}" Width="1.1*">
+          <DataGridTextColumn.Header>
+            <TextBlock Text="{DynamicResource ColVersion}" />
+          </DataGridTextColumn.Header>
+        </DataGridTextColumn>
+        <DataGridTemplateColumn Width="100" SortMemberPath="SizeBytes">
+          <DataGridTemplateColumn.Header>
+            <TextBlock Text="{DynamicResource ColSize}" />
+          </DataGridTemplateColumn.Header>
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Size}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn Width="110" SortMemberPath="InstalledDate">
+          <DataGridTemplateColumn.Header>
+            <TextBlock Text="{DynamicResource ColInstalled}" />
+          </DataGridTemplateColumn.Header>
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <TextBlock Classes="muted" Text="{Binding Installed}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn Width="130" SortMemberPath="KindText">
+          <DataGridTemplateColumn.Header>
+            <TextBlock Text="{DynamicResource ColType}" />
+          </DataGridTemplateColumn.Header>
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Border Classes="badge" Classes.info="{Binding IsStore}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock Text="{Binding KindText}" />
+              </Border>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <!-- Actions right-aligned like Startup: modify · repair · more · uninstall (fixed slots, nothing shifts) -->
+        <DataGridTemplateColumn Width="140" CanUserSort="False" CanUserReorder="False">
+          <DataGridTemplateColumn.Header>
+            <TextBlock Text="{DynamicResource ColActions}" />
+          </DataGridTemplateColumn.Header>
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Panel Width="28">
+                  <Button Classes="icon small" ToolTip.Tip="{DynamicResource BtnModify}" IsVisible="{Binding CanModify}"
+                          Command="{Binding $parent[UserControl].DataContext.ModifyCommand}" CommandParameter="{Binding}">
+                    <PathIcon Data="{StaticResource IconPencil}" />
+                  </Button>
+                </Panel>
+                <Panel Width="28">
+                  <Button Classes="icon small" ToolTip.Tip="{DynamicResource BtnRepair}" IsVisible="{Binding CanRepair}"
+                          Command="{Binding $parent[UserControl].DataContext.RepairCommand}" CommandParameter="{Binding}">
+                    <PathIcon Data="{StaticResource IconWrench}" />
+                  </Button>
+                </Panel>
+                <Button Classes="icon small" ToolTip.Tip="{DynamicResource TipMore}">
+                  <PathIcon Data="{StaticResource IconDotsVertical}" />
+                  <Button.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedRight">
+                      <MenuItem Header="{DynamicResource MenuOpenLocation}" IsEnabled="{Binding HasLocation}"
+                                Command="{Binding $parent[UserControl].DataContext.OpenLocationCommand}" CommandParameter="{Binding}">
+                        <MenuItem.Icon><PathIcon Data="{StaticResource IconFolderOpen}" /></MenuItem.Icon>
+                      </MenuItem>
+                      <MenuItem Header="{DynamicResource MenuLeftovers}" IsVisible="{Binding !IsStore}"
+                                Command="{Binding $parent[UserControl].DataContext.LeftoversCommand}" CommandParameter="{Binding}">
+                        <MenuItem.Icon><PathIcon Data="{StaticResource IconFolderSearch}" /></MenuItem.Icon>
+                      </MenuItem>
+                      <MenuItem Header="{DynamicResource MenuCopyUninstall}" IsEnabled="{Binding HasCommand}"
+                                Command="{Binding $parent[UserControl].DataContext.CopyUninstallStringCommand}" CommandParameter="{Binding}">
+                        <MenuItem.Icon><PathIcon Data="{StaticResource IconCopy}" /></MenuItem.Icon>
+                      </MenuItem>
+                    </MenuFlyout>
+                  </Button.Flyout>
+                </Button>
+                <Button Classes="icon small delete" ToolTip.Tip="{DynamicResource BtnUninstall}"
+                        Command="{Binding $parent[UserControl].DataContext.UninstallCommand}" CommandParameter="{Binding}">
+                  <PathIcon Data="{StaticResource IconDelete}" />
+                </Button>
+              </StackPanel>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>

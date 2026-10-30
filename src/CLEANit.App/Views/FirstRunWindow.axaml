@@ -1,0 +1,51 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="using:CLEANit.App.Controls"
+        x:Class="CLEANit.App.Views.FirstRunWindow"
+        Icon="/Assets/cleanit.ico"
+        Title="CLEANit"
+        Width="580"
+        SizeToContent="Height"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+  <!-- Everything centred: logo, title, question, expert note, option and the two choices -->
+  <Border Padding="36,32,36,30">
+    <StackPanel Spacing="18" HorizontalAlignment="Stretch">
+      <Panel Width="64" Height="64" HorizontalAlignment="Center">
+        <Border Classes="logoglow" Margin="4" />
+        <Border Classes="logo" />
+      </Panel>
+      <StackPanel Spacing="6" HorizontalAlignment="Center">
+        <TextBlock Classes="h2" Text="{DynamicResource FirstRunTitle}" HorizontalAlignment="Center" TextAlignment="Center" />
+        <TextBlock Classes="muted" Text="{DynamicResource FirstRunQuestion}" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="460" />
+      </StackPanel>
+
+      <!-- Same look as the expert notes on the expert pages -->
+      <Border Classes="notice moderate" Padding="18,14">
+        <StackPanel Spacing="8" HorizontalAlignment="Center">
+          <PathIcon Data="{StaticResource IconExpert}" Width="22" Height="22" Foreground="{DynamicResource BrushModerate}" HorizontalAlignment="Center" />
+          <TextBlock Text="{DynamicResource FirstRunExpertText}" TextWrapping="Wrap" TextAlignment="Center" />
+        </StackPanel>
+      </Border>
+      <TextBlock Classes="muted small" Text="{DynamicResource FirstRunLater}" TextWrapping="Wrap" TextAlignment="Center" />
+
+      <!-- Start in the system tray at sign-in (off by default) -->
+      <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+        <PathIcon Data="{StaticResource IconTray}" Width="16" Height="16" Foreground="{DynamicResource BrushAccentText}" VerticalAlignment="Center" />
+        <TextBlock Text="{DynamicResource FirstRunTray}" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="360" />
+        <ToggleSwitch x:Name="TrayToggle" OnContent="" OffContent="" MinWidth="0" VerticalAlignment="Center" />
+      </StackPanel>
+
+      <!-- Centred pair: grey choice left, main choice right -->
+      <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" Margin="0,6,0,0">
+        <Button Classes="fixed" Padding="16,9" Click="OnSimple">
+          <ctl:IconLabel Icon="{StaticResource IconUser}" Text="{DynamicResource BtnKeepSimple}" />
+        </Button>
+        <Button Classes="primary fixed" Padding="16,9" Click="OnExpert">
+          <ctl:IconLabel Icon="{StaticResource IconExpert}" Text="{DynamicResource BtnShowExpert}" />
+        </Button>
+      </StackPanel>
+    </StackPanel>
+  </Border>
+</Window>

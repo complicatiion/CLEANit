@@ -1,0 +1,266 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             x:Class="CLEANit.App.Views.FolderCompareView">
+  <DockPanel>
+
+    <!-- Left folder · swap / compare · right folder (both cards accept dropped folders) -->
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,*" Margin="0,0,0,12">
+      <Border x:Name="LeftCard" Classes="card" Padding="16,14">
+        <StackPanel Spacing="8">
+          <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+            <PathIcon Data="{StaticResource IconFolder}" Width="20" Height="20" Foreground="{DynamicResource BrushModerate}" Margin="0,0,10,0" />
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+              <TextBlock Classes="section" Text="{DynamicResource CompareLeft}" />
+              <TextBlock Classes="h3" Text="{Binding LeftName}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Left}" />
+            </StackPanel>
+            <Button Grid.Column="2" Classes="icon small" ToolTip.Tip="{DynamicResource BtnExplorer}" IsEnabled="{Binding HasLeft}"
+                    Command="{Binding OpenFolderCommand}" CommandParameter="left">
+              <PathIcon Data="{StaticResource IconOpenInNew}" />
+            </Button>
+            <Button Grid.Column="3" Margin="6,0,0,0" Command="{Binding BrowseCommand}" CommandParameter="left">
+              <ctl:IconLabel Icon="{StaticResource IconFolderOpen}" Text="{DynamicResource BtnChooseFolder}" />
+            </Button>
+          </Grid>
+          <Border Classes="droparea" Padding="10,8">
+            <TextBlock Classes="mono small muted" Text="{Binding LeftInfo}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding LeftInfo}" />
+          </Border>
+        </StackPanel>
+      </Border>
+
+      <StackPanel Grid.Column="1" Spacing="8" VerticalAlignment="Center" Margin="12,0">
+        <Button Classes="primary" Command="{Binding CompareCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
+          <ctl:IconLabel Icon="{StaticResource IconCompare}" Text="{DynamicResource BtnCompare}" />
+        </Button>
+        <Button Classes="icon" HorizontalAlignment="Center" ToolTip.Tip="{DynamicResource TipSwapFolders}" Command="{Binding SwapCommand}">
+          <PathIcon Data="{StaticResource IconSwap}" />
+        </Button>
+      </StackPanel>
+
+      <Border x:Name="RightCard" Grid.Column="2" Classes="card" Padding="16,14">
+        <StackPanel Spacing="8">
+          <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+            <PathIcon Data="{StaticResource IconFolder}" Width="20" Height="20" Foreground="{DynamicResource BrushInfo}" Margin="0,0,10,0" />
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+              <TextBlock Classes="section" Text="{DynamicResource CompareRight}" />
+              <TextBlock Classes="h3" Text="{Binding RightName}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Right}" />
+            </StackPanel>
+            <Button Grid.Column="2" Classes="icon small" ToolTip.Tip="{DynamicResource BtnExplorer}" IsEnabled="{Binding HasRight}"
+                    Command="{Binding OpenFolderCommand}" CommandParameter="right">
+              <PathIcon Data="{StaticResource IconOpenInNew}" />
+            </Button>
+            <Button Grid.Column="3" Margin="6,0,0,0" Command="{Binding BrowseCommand}" CommandParameter="right">
+              <ctl:IconLabel Icon="{StaticResource IconFolderOpen}" Text="{DynamicResource BtnChooseFolder}" />
+            </Button>
+          </Grid>
+          <Border Classes="droparea" Padding="10,8">
+            <TextBlock Classes="mono small muted" Text="{Binding RightInfo}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding RightInfo}" />
+          </Border>
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <!-- Select all / none · filters (coloured like the states) · compare content · search -->
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,10">
+      <StackPanel Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
+        <Button Classes="icon" Command="{Binding SelectAllCommand}" ToolTip.Tip="{DynamicResource TipSelectAllDifferent}">
+          <PathIcon Data="{StaticResource IconSelectAll}" />
+        </Button>
+        <Button Classes="icon" Command="{Binding SelectNoneCommand}" ToolTip.Tip="{DynamicResource TipSelectNone}">
+          <PathIcon Data="{StaticResource IconSelectNone}" />
+        </Button>
+      </StackPanel>
+      <WrapPanel Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
+        <PathIcon Data="{StaticResource IconFilterVariant}" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center"
+                  Foreground="{DynamicResource BrushTextSecondary}" />
+        <ToggleButton Classes="chip moderate" IsChecked="{Binding ShowDifferent}" Margin="0,2,6,2">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="{DynamicResource CompareStateDifferent}" />
+            <TextBlock Text="{Binding DifferentCount}" FontWeight="SemiBold" />
+          </StackPanel>
+        </ToggleButton>
+        <ToggleButton Classes="chip accent" IsChecked="{Binding ShowLeftOnly}" Margin="0,2,6,2">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="{DynamicResource CompareStateLeftOnly}" />
+            <TextBlock Text="{Binding LeftOnlyCount}" FontWeight="SemiBold" />
+          </StackPanel>
+        </ToggleButton>
+        <ToggleButton Classes="chip info" IsChecked="{Binding ShowRightOnly}" Margin="0,2,6,2">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="{DynamicResource CompareStateRightOnly}" />
+            <TextBlock Text="{Binding RightOnlyCount}" FontWeight="SemiBold" />
+          </StackPanel>
+        </ToggleButton>
+        <ToggleButton Classes="chip safe" IsChecked="{Binding ShowIdentical}" Margin="0,2,6,2">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="{DynamicResource CompareStateIdentical}" />
+            <TextBlock Text="{Binding IdenticalCount}" FontWeight="SemiBold" />
+          </StackPanel>
+        </ToggleButton>
+        <!-- Compare content: right of the state filters -->
+        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" Background="Transparent" Margin="10,0,0,0"
+                    ToolTip.Tip="{DynamicResource TipCompareContent}">
+          <ToggleSwitch IsChecked="{Binding ByContent}" OnContent="" OffContent="" MinWidth="0" VerticalAlignment="Center" />
+          <TextBlock Text="{DynamicResource LblCompareContent}" VerticalAlignment="Center" />
+        </StackPanel>
+      </WrapPanel>
+      <TextBox Grid.Column="2" Text="{Binding Search}" Watermark="{DynamicResource WatermarkSearchFiles}" Width="260">
+        <TextBox.InnerLeftContent>
+          <PathIcon Data="{StaticResource IconMagnify}" Width="16" Height="16" Margin="10,0,0,0" Opacity="0.7" />
+        </TextBox.InnerLeftContent>
+      </TextBox>
+    </Grid>
+
+    <!-- Action bar: delete on one side, copy in either direction (main action right) -->
+    <Border DockPanel.Dock="Bottom" Classes="card" Padding="16,12" Margin="0,12,0,0">
+      <Grid ColumnDefinitions="Auto,*,Auto">
+        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+          <TextBlock Text="{Binding SummaryText}" FontWeight="SemiBold" TextWrapping="Wrap" />
+          <TextBlock Classes="muted small" Text="{Binding ModeText}" TextWrapping="Wrap" />
+          <StackPanel Spacing="4" IsVisible="{Binding IsBusy}">
+            <ProgressBar IsIndeterminate="True" />
+            <TextBlock Classes="muted small" Text="{Binding Status}" TextTrimming="CharacterEllipsis" />
+          </StackPanel>
+        </StackPanel>
+        <WrapPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="16,0,0,0">
+          <Button Classes="fixed cancel" Margin="0,0,10,0" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}">
+            <ctl:IconLabel Icon="{StaticResource IconCancel}" Text="{DynamicResource BtnCancel}" />
+          </Button>
+          <Button Classes="danger" Margin="0,0,10,0" Command="{Binding DeleteLeftCommand}">
+            <ctl:IconLabel Icon="{StaticResource IconDelete}" Text="{DynamicResource BtnDeleteLeft}" />
+          </Button>
+          <Button Classes="danger" Margin="0,0,10,0" Command="{Binding DeleteRightCommand}">
+            <ctl:IconLabel Icon="{StaticResource IconDelete}" Text="{DynamicResource BtnDeleteRight}" />
+          </Button>
+          <Button Margin="0,0,10,0" Command="{Binding CopyToLeftCommand}">
+            <ctl:IconLabel Icon="{StaticResource IconArrowLeftBold}" Text="{DynamicResource BtnCopyToLeft}" />
+          </Button>
+          <Button Classes="primary" Command="{Binding CopyToRightCommand}">
+            <ctl:IconLabel Icon="{StaticResource IconArrowRightBold}" Text="{DynamicResource BtnCopyToRight}" />
+          </Button>
+        </WrapPanel>
+      </Grid>
+    </Border>
+
+    <!-- Result -->
+    <Grid>
+      <StackPanel Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding !HasRows}">
+        <PathIcon Data="{StaticResource IconFileCompare}" Width="34" Height="34" Foreground="{DynamicResource BrushTextSecondary}" HorizontalAlignment="Center" />
+        <TextBlock Classes="muted" Text="{Binding SummaryText}" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="520" />
+      </StackPanel>
+      <!-- Rows tinted by state (only left: accent, only right: blue, different: amber) – set in code-behind (LoadingRow) -->
+      <DataGrid x:Name="ResultGrid" ItemsSource="{Binding Rows}" IsVisible="{Binding HasRows}" RowHeight="46">
+        <DataGrid.Columns>
+          <DataGridTemplateColumn Width="52" CanUserSort="False" CanUserReorder="False" CanUserResize="False">
+            <DataGridTemplateColumn.Header>
+              <CheckBox IsChecked="{Binding $parent[UserControl].DataContext.AllChecked}" IsEnabled="{Binding $parent[UserControl].DataContext.HasSelectable}"
+                        ToolTip.Tip="{DynamicResource TipSelectAllDifferent}" MinWidth="0" Padding="0" HorizontalAlignment="Center" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <Grid>
+                  <!-- State stripe at the left edge -->
+                  <Border Classes="statestripe" Classes.accent="{Binding IsLeftOnly}" Classes.info="{Binding IsRightOnly}" Classes.moderate="{Binding IsDifferent}"
+                          HorizontalAlignment="Left" />
+                  <CheckBox IsChecked="{Binding IsChecked}" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="0" Padding="0" />
+                </Grid>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Width="120" SortMemberPath="StateSort">
+            <DataGridTemplateColumn.Header>
+              <TextBlock Text="{DynamicResource ColCompareState}" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <Border Classes="badge" Classes.safe="{Binding IsIdentical}" Classes.moderate="{Binding IsDifferent}" Classes.accent="{Binding IsLeftOnly}"
+                        Classes.info="{Binding IsRightOnly}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                  <TextBlock Text="{Binding StateText}" />
+                </Border>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Width="2.4*" SortMemberPath="RelativePath">
+            <DataGridTemplateColumn.Header>
+              <TextBlock Text="{DynamicResource ColName}" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <Grid ColumnDefinitions="Auto,*" VerticalAlignment="Center" Margin="0,0,10,0">
+                  <Panel Width="16" Margin="0,0,8,0">
+                    <PathIcon Data="{StaticResource IconFolder}" Width="15" Height="15" Foreground="{DynamicResource BrushModerate}" IsVisible="{Binding IsFolder}" />
+                    <PathIcon Data="{StaticResource IconFile}" Width="15" Height="15" Foreground="{DynamicResource BrushTextSecondary}" IsVisible="{Binding !IsFolder}" />
+                  </Panel>
+                  <StackPanel Grid.Column="1">
+                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding RelativePath}" />
+                    <TextBlock Classes="mono small muted" Text="{Binding Folder}" TextTrimming="CharacterEllipsis" />
+                  </StackPanel>
+                </Grid>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Width="1.2*" SortMemberPath="LeftSort">
+            <DataGridTemplateColumn.Header>
+              <TextBlock Text="{DynamicResource CompareLeft}" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="{Binding LeftSize}" HorizontalAlignment="Right" />
+                  <TextBlock Classes="muted small" Text="{Binding LeftTime}" HorizontalAlignment="Right" />
+                </StackPanel>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Width="1.3*" CanUserSort="False">
+            <DataGridTemplateColumn.Header>
+              <TextBlock Text="{DynamicResource ColDifference}" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Classes="muted small" Text="{Binding ReasonText}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis" Margin="8,0" />
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Width="1.2*" SortMemberPath="RightSort">
+            <DataGridTemplateColumn.Header>
+              <TextBlock Text="{DynamicResource CompareRight}" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <StackPanel VerticalAlignment="Center">
+                  <TextBlock Text="{Binding RightSize}" HorizontalAlignment="Right" />
+                  <TextBlock Classes="muted small" Text="{Binding RightTime}" HorizontalAlignment="Right" />
+                </StackPanel>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Width="110" MinWidth="96" CanUserSort="False" CanUserReorder="False">
+            <DataGridTemplateColumn.Header>
+              <TextBlock Text="{DynamicResource ColActions}" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                  <Panel Width="28">
+                    <Button Classes="icon small" ToolTip.Tip="{DynamicResource TipOpenLeft}" IsVisible="{Binding HasLeft}"
+                            Command="{Binding $parent[UserControl].DataContext.OpenLeftCommand}" CommandParameter="{Binding}">
+                      <PathIcon Data="{StaticResource IconArrowLeftBold}" />
+                    </Button>
+                  </Panel>
+                  <Panel Width="28">
+                    <Button Classes="icon small" ToolTip.Tip="{DynamicResource TipOpenRight}" IsVisible="{Binding HasRight}"
+                            Command="{Binding $parent[UserControl].DataContext.OpenRightCommand}" CommandParameter="{Binding}">
+                      <PathIcon Data="{StaticResource IconArrowRightBold}" />
+                    </Button>
+                  </Panel>
+                </StackPanel>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+    </Grid>
+  </DockPanel>
+</UserControl>

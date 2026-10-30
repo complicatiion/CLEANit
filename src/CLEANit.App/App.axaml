@@ -1,0 +1,41 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="CLEANit.App.App"
+             Name="CLEANit"
+             RequestedThemeVariant="Default">
+
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="avares://CLEANit/Theme/Colors.axaml" />
+        <ResourceInclude Source="avares://CLEANit/Theme/Icons.axaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme>
+      <FluentTheme.Palettes>
+        <!-- Accent instead of system blue: check marks, radio buttons, selection, switches, focus -->
+        <ColorPaletteResources x:Key="Dark"
+                               Accent="#FFD81B60"
+                               RegionColor="#FF1A1A1E"
+                               AltHigh="#FF1A1A1E"
+                               ListLow="#FF2A2A31"
+                               ListMedium="#FF33333B"
+                               ChromeMediumLow="#FF222228"
+                               ChromeMedium="#FF2A2A31"
+                               ChromeLow="#FF1A1A1E"
+                               ChromeAltLow="#FFF4F4F5"
+                               BaseHigh="#FFF4F4F5" />
+        <ColorPaletteResources x:Key="Light"
+                               Accent="#FFC2185B"
+                               RegionColor="#FFFFFFFF"
+                               BaseHigh="#FF18181B" />
+      </FluentTheme.Palettes>
+    </FluentTheme>
+    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+    <StyleInclude Source="avares://CLEANit/Theme/Styles.axaml" />
+  </Application.Styles>
+
+</Application>

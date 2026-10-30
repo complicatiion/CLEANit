@@ -1,0 +1,400 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             x:Class="CLEANit.App.Views.SoftwareCatalogView">
+  <DockPanel>
+
+    <!-- winget missing (Windows Server 2016–2022, LTSC without App Installer) -->
+    <Border DockPanel.Dock="Top" Classes="notice moderate" IsVisible="{Binding IsMissing}" Margin="0,0,0,12">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <PathIcon Data="{StaticResource IconAlert}" Width="18" Height="18" Foreground="{DynamicResource BrushModerate}" />
+        <TextBlock Text="{DynamicResource WingetMissing}" TextWrapping="Wrap" MaxWidth="900" />
+      </StackPanel>
+    </Border>
+
+    <!-- Status bar: progress, Cancel, legal note -->
+    <Border DockPanel.Dock="Bottom" Classes="card" Padding="16,10" Margin="0,12,0,0">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel VerticalAlignment="Center" Spacing="4">
+          <TextBlock Classes="muted small" Text="{DynamicResource CatalogLegal}" TextWrapping="Wrap" />
+          <StackPanel Spacing="4" IsVisible="{Binding IsBusy}">
+            <ProgressBar IsIndeterminate="True" />
+            <TextBlock Classes="muted small" Text="{Binding Status}" TextTrimming="CharacterEllipsis" />
+          </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="16,0,0,0" VerticalAlignment="Center">
+          <TextBlock Classes="muted small" Text="{Binding VersionText}" VerticalAlignment="Center" />
+          <Button Classes="fixed cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}">
+            <ctl:IconLabel Icon="{StaticResource IconCancel}" Text="{DynamicResource BtnCancel}" />
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- winget output (animated expander) -->
+    <Expander DockPanel.Dock="Bottom" Header="{DynamicResource HdrWingetOutput}" Margin="0,10,0,0">
+      <TextBox Text="{Binding Output}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="NoWrap" FontFamily="{DynamicResource MonoFont}"
+               FontSize="12" MaxHeight="200" />
+    </Expander>
+
+    <TabControl SelectedIndex="{Binding TabIndex}">
+
+      <!-- ============================================================ Search & install -->
+      <TabItem Header="{DynamicResource TabCatalogSearch}">
+        <DockPanel Margin="0,12,0,0">
+          <!-- Search bar on the left, result count on the right -->
+          <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,Auto,*,Auto" Margin="0,0,0,10">
+            <TextBox Text="{Binding Query}" Watermark="{DynamicResource WatermarkCatalogSearch}" Width="460" HorizontalAlignment="Left">
+              <TextBox.InnerLeftContent>
+                <PathIcon Data="{StaticResource IconMagnify}" Width="16" Height="16" Margin="10,0,0,0" Opacity="0.7" />
+              </TextBox.InnerLeftContent>
+              <TextBox.KeyBindings>
+                <KeyBinding Gesture="Enter" Command="{Binding SearchCommand}" />
+              </TextBox.KeyBindings>
+            </TextBox>
+            <Button Grid.Column="1" Classes="primary" Margin="8,0,0,0" Command="{Binding SearchCommand}">
+              <ctl:IconLabel Icon="{StaticResource IconMagnify}" Text="{DynamicResource BtnSearch}" />
+            </Button>
+            <Border Grid.Column="3" Classes="pill accent" Margin="12,0,0,0" VerticalAlignment="Center" IsVisible="{Binding HasResults}">
+              <TextBlock Text="{Binding SearchSummary}" />
+            </Border>
+          </Grid>
+
+          <!-- Actions: grey "add to bundle" left of the main action -->
+          <Grid DockPanel.Dock="Bottom" ColumnDefinitions="*,Auto" Margin="0,10,0,0">
+            <CheckBox IsChecked="{Binding MachineScope}" IsVisible="{Binding IsExpert}" Content="{DynamicResource LblMachineScope}" VerticalAlignment="Center" />
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+              <Button Classes="fixed" Command="{Binding AddToBundleCommand}" ToolTip.Tip="{DynamicResource TipAddToBundle}">
+                <ctl:IconLabel Icon="{StaticResource IconPlaylistPlus}" Text="{DynamicResource BtnAddToBundle}" />
+              </Button>
+              <Button Classes="primary fixed" Command="{Binding InstallSelectedCommand}">
+                <ctl:IconLabel Icon="{StaticResource IconDownload}" Text="{DynamicResource BtnInstallSelected}" />
+              </Button>
+            </StackPanel>
+          </Grid>
+
+          <Grid ColumnDefinitions="*,14,340">
+            <Grid>
+              <DataGrid ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedResult, Mode=TwoWay}" IsVisible="{Binding HasResults}">
+                <DataGrid.Columns>
+                  <DataGridTemplateColumn Width="44" CanUserSort="False" CanUserReorder="False" CanUserResize="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <CheckBox IsChecked="{Binding IsChecked}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTemplateColumn Width="2*" SortMemberPath="Name">
+                    <DataGridTemplateColumn.Header>
+                      <TextBlock Text="{DynamicResource ColProgram}" />
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <StackPanel VerticalAlignment="Center">
+                          <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                          <TextBlock Classes="muted small" Text="{Binding Publisher}" IsVisible="{Binding HasDetails}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTemplateColumn Width="1.6*" SortMemberPath="Id">
+                    <DataGridTemplateColumn.Header>
+                      <TextBlock Text="{DynamicResource ColId}" />
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <TextBlock Classes="mono small muted" Text="{Binding Id}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Id}" />
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTextColumn Binding="{Binding Version}" Width="100">
+                    <DataGridTextColumn.Header>
+                      <TextBlock Text="{DynamicResource ColVersion}" />
+                    </DataGridTextColumn.Header>
+                  </DataGridTextColumn>
+                  <DataGridTemplateColumn Width="100" SortMemberPath="Source">
+                    <DataGridTemplateColumn.Header>
+                      <TextBlock Text="{DynamicResource ColSource}" />
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <Border Classes="badge" Classes.info="{Binding IsWinget}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                          <TextBlock Text="{Binding Source}" />
+                        </Border>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTextColumn Binding="{Binding State}" Width="110">
+                    <DataGridTextColumn.Header>
+                      <TextBlock Text="{DynamicResource ColState}" />
+                    </DataGridTextColumn.Header>
+                  </DataGridTextColumn>
+                </DataGrid.Columns>
+              </DataGrid>
+            </Grid>
+
+            <!-- Details of the selected package: publisher, license, links -->
+            <Border Grid.Column="2" Classes="card">
+              <Grid>
+                <StackPanel IsVisible="{Binding !HasSelectedResult}" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10">
+                  <PathIcon Data="{StaticResource IconPackagePlus}" Width="34" Height="34" Foreground="{DynamicResource BrushTextDisabled}" />
+                  <TextBlock Classes="muted" Text="{DynamicResource CatalogDetailsHint}" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="260" />
+                </StackPanel>
+                <ScrollViewer IsVisible="{Binding HasSelectedResult}">
+                  <StackPanel Spacing="10" DataContext="{Binding SelectedResult}">
+                    <TextBlock Classes="h2" Text="{Binding Name}" TextWrapping="Wrap" />
+                    <TextBlock Classes="mono small muted" Text="{Binding Id}" TextWrapping="Wrap" />
+                    <ProgressBar IsIndeterminate="True" IsVisible="{Binding !HasDetails}" Width="160" HorizontalAlignment="Left" />
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" IsVisible="{Binding HasDetails}">
+                      <TextBlock Classes="muted small" Text="{DynamicResource ColVersion}" Margin="0,0,12,6" />
+                      <TextBlock Grid.Column="1" Text="{Binding Details.Version}" TextWrapping="Wrap" />
+                      <TextBlock Grid.Row="1" Classes="muted small" Text="{DynamicResource ColPublisher}" Margin="0,0,12,6" />
+                      <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Details.Publisher}" TextWrapping="Wrap" />
+                      <TextBlock Grid.Row="2" Classes="muted small" Text="{DynamicResource ColLicense}" Margin="0,0,12,6" />
+                      <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Details.License}" TextWrapping="Wrap" FontWeight="SemiBold" />
+                      <TextBlock Grid.Row="3" Classes="muted small" Text="{DynamicResource ColInstallerType}" Margin="0,0,12,6" />
+                      <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Details.InstallerType}" TextWrapping="Wrap" />
+                    </Grid>
+                    <TextBlock Text="{Binding Details.Description}" TextWrapping="Wrap" IsVisible="{Binding HasDetails}" />
+                    <WrapPanel IsVisible="{Binding HasDetails}">
+                      <Button Margin="0,0,8,8" Command="{Binding $parent[UserControl].DataContext.OpenHomepageCommand}">
+                        <ctl:IconLabel Icon="{StaticResource IconOpenInNew}" Text="{DynamicResource BtnHomepage}" />
+                      </Button>
+                      <Button Margin="0,0,8,8" Command="{Binding $parent[UserControl].DataContext.OpenLicenseCommand}">
+                        <ctl:IconLabel Icon="{StaticResource IconLicense}" Text="{DynamicResource BtnLicense}" />
+                      </Button>
+                    </WrapPanel>
+                    <!-- Expert: fixed version -->
+                    <StackPanel Spacing="4" IsVisible="{Binding $parent[UserControl].DataContext.IsExpert}">
+                      <TextBlock Classes="label" Text="{DynamicResource LblPinVersion}" />
+                      <TextBox Text="{Binding $parent[UserControl].DataContext.PinVersion}" Watermark="{DynamicResource WatermarkPinVersion}" />
+                    </StackPanel>
+                  </StackPanel>
+                </ScrollViewer>
+              </Grid>
+            </Border>
+          </Grid>
+        </DockPanel>
+      </TabItem>
+
+      <!-- ============================================================ Installed -->
+      <TabItem Header="{DynamicResource TabCatalogInstalled}">
+        <DockPanel Margin="0,12,0,0">
+          <!-- Search · select all / none right of it · filter · refresh -->
+          <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,Auto,*,Auto,Auto" Margin="0,0,0,10">
+            <TextBox Text="{Binding InstalledSearch}" Watermark="{DynamicResource WatermarkSearchPrograms}" Width="380">
+              <TextBox.InnerLeftContent>
+                <PathIcon Data="{StaticResource IconMagnify}" Width="16" Height="16" Margin="10,0,0,0" Opacity="0.7" />
+              </TextBox.InnerLeftContent>
+            </TextBox>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2" Margin="8,0,0,0">
+              <Button Classes="icon" Command="{Binding SelectAllKnownCommand}" ToolTip.Tip="{DynamicResource TipSelectKnown}">
+                <PathIcon Data="{StaticResource IconSelectAll}" />
+              </Button>
+              <Button Classes="icon" Command="{Binding SelectNoneInstalledCommand}" ToolTip.Tip="{DynamicResource TipSelectNone}">
+                <PathIcon Data="{StaticResource IconSelectNone}" />
+              </Button>
+            </StackPanel>
+            <ComboBox Grid.Column="3" ItemsSource="{Binding InstalledFilters}" SelectedIndex="{Binding InstalledFilter}" MinWidth="190" Margin="12,0,8,0" />
+            <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="8">
+              <Button Classes="primary" Command="{Binding LoadInstalledCommand}">
+                <ctl:IconLabel Icon="{StaticResource IconRefresh}" Text="{DynamicResource BtnRefresh}" />
+              </Button>
+            </StackPanel>
+          </Grid>
+          <Grid DockPanel.Dock="Bottom" ColumnDefinitions="*,Auto" Margin="0,10,0,0">
+            <Border Classes="pill accent" HorizontalAlignment="Left" VerticalAlignment="Center" IsVisible="{Binding HasInstalled}">
+              <TextBlock Text="{Binding InstalledSummary}" />
+            </Border>
+            <Button Grid.Column="1" Classes="primary fixed" Command="{Binding CreateBundleFromInstalledCommand}">
+              <ctl:IconLabel Icon="{StaticResource IconBundle}" Text="{DynamicResource BtnCreateBundle}" />
+            </Button>
+          </Grid>
+          <Grid>
+            <TextBlock Classes="muted" Text="{DynamicResource CatalogInstalledHint}" IsVisible="{Binding !HasInstalled}" HorizontalAlignment="Center" Margin="0,40"
+                       TextWrapping="Wrap" />
+            <DataGrid ItemsSource="{Binding Installed}" IsVisible="{Binding HasInstalled}">
+              <DataGrid.Columns>
+                <DataGridTemplateColumn Width="44" CanUserSort="False" CanUserReorder="False" CanUserResize="False">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <CheckBox IsChecked="{Binding IsChecked}" IsEnabled="{Binding CanBundle}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Width="2*" SortMemberPath="Name">
+                  <DataGridTemplateColumn.Header>
+                    <TextBlock Text="{DynamicResource ColProgram}" />
+                  </DataGridTemplateColumn.Header>
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <TextBlock Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Name}" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Width="1.8*" SortMemberPath="Id">
+                  <DataGridTemplateColumn.Header>
+                    <TextBlock Text="{DynamicResource ColId}" />
+                  </DataGridTemplateColumn.Header>
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <TextBlock Classes="mono small muted" Text="{Binding Id}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Id}" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding Version}" Width="110">
+                  <DataGridTextColumn.Header>
+                    <TextBlock Text="{DynamicResource ColVersion}" />
+                  </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Available}" Width="110">
+                  <DataGridTextColumn.Header>
+                    <TextBlock Text="{DynamicResource ColAvailable}" />
+                  </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn Width="150" SortMemberPath="IsKnown">
+                  <DataGridTemplateColumn.Header>
+                    <TextBlock Text="{DynamicResource ColWinget}" />
+                  </DataGridTemplateColumn.Header>
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <Panel VerticalAlignment="Center" HorizontalAlignment="Left">
+                        <Border Classes="badge safe" IsVisible="{Binding IsKnown}">
+                          <TextBlock Text="{Binding Source}" />
+                        </Border>
+                        <Border Classes="badge" IsVisible="{Binding IsUnknown}">
+                          <TextBlock Text="{DynamicResource BadgeNotInWinget}" />
+                        </Border>
+                      </Panel>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+              </DataGrid.Columns>
+            </DataGrid>
+          </Grid>
+        </DockPanel>
+      </TabItem>
+
+      <!-- ============================================================ Bundles -->
+      <TabItem Header="{DynamicResource TabCatalogBundles}">
+        <Grid ColumnDefinitions="260,14,*" Margin="0,12,0,0">
+          <!-- Bundle list -->
+          <DockPanel>
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,10">
+              <Button Command="{Binding NewBundleCommand}" ToolTip.Tip="{DynamicResource BtnNewBundle}">
+                <ctl:IconLabel Icon="{StaticResource IconPlus}" Text="{DynamicResource BtnNew}" />
+              </Button>
+              <Button Command="{Binding ImportBundleCommand}" ToolTip.Tip="{DynamicResource BtnImportBundle}">
+                <ctl:IconLabel Icon="{StaticResource IconImport}" Text="{DynamicResource BtnImport}" />
+              </Button>
+            </StackPanel>
+            <Border Classes="card" Padding="6">
+              <Grid>
+                <TextBlock Classes="muted" Text="{DynamicResource BundlesEmpty}" IsVisible="{Binding !HasBundles}" TextWrapping="Wrap" Margin="10" />
+                <ListBox ItemsSource="{Binding Bundles}" SelectedItem="{Binding SelectedBundle}" Background="Transparent">
+                  <ListBox.ItemTemplate>
+                    <DataTemplate>
+                      <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Data="{StaticResource IconBundle}" Width="16" Height="16" Foreground="{DynamicResource BrushAccentText}" />
+                        <TextBlock Text="{Binding}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                      </StackPanel>
+                    </DataTemplate>
+                  </ListBox.ItemTemplate>
+                </ListBox>
+              </Grid>
+            </Border>
+          </DockPanel>
+
+          <!-- Packages of the selected bundle with preview -->
+          <DockPanel Grid.Column="2" IsVisible="{Binding HasSelectedBundle}">
+            <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+              <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <TextBlock Classes="h2" Text="{Binding SelectedBundle}" VerticalAlignment="Center" />
+                <Border Classes="pill accent" VerticalAlignment="Center">
+                  <TextBlock Text="{Binding BundleSummary}" />
+                </Border>
+              </StackPanel>
+              <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                <!-- Check: neutral grey; Export: highlighted (installing is the main action in the bar below) -->
+                <Button Command="{Binding PreviewBundleCommand}" ToolTip.Tip="{DynamicResource TipPreviewBundle}">
+                  <ctl:IconLabel Icon="{StaticResource IconRefresh}" Text="{DynamicResource BtnPreviewBundle}" />
+                </Button>
+                <Button Classes="primary" Command="{Binding ExportBundleCommand}" ToolTip.Tip="{DynamicResource BtnExportBundle}">
+                  <ctl:IconLabel Icon="{StaticResource IconExport}" Text="{DynamicResource BtnExport}" />
+                </Button>
+                <Button Classes="icon delete" Command="{Binding DeleteBundleCommand}" ToolTip.Tip="{DynamicResource BtnDeleteBundle}">
+                  <PathIcon Data="{StaticResource IconDelete}" />
+                </Button>
+              </StackPanel>
+            </Grid>
+            <Grid DockPanel.Dock="Bottom" ColumnDefinitions="*,Auto" Margin="0,10,0,0">
+              <TextBlock Classes="muted small" Text="{DynamicResource BundleInstallNote}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,16,0" />
+              <Button Grid.Column="1" Classes="primary fixed" Command="{Binding InstallBundleCommand}">
+                <ctl:IconLabel Icon="{StaticResource IconDownload}" Text="{DynamicResource BtnInstallNew}" />
+              </Button>
+            </Grid>
+            <Grid>
+              <TextBlock Classes="muted" Text="{DynamicResource BundleEmpty}" IsVisible="{Binding !HasBundlePackages}" HorizontalAlignment="Center" Margin="0,40"
+                         TextWrapping="Wrap" />
+              <DataGrid ItemsSource="{Binding BundlePackages}" IsVisible="{Binding HasBundlePackages}">
+                <DataGrid.Columns>
+                  <DataGridTemplateColumn Width="2*" SortMemberPath="Id">
+                    <DataGridTemplateColumn.Header>
+                      <TextBlock Text="{DynamicResource ColId}" />
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <StackPanel VerticalAlignment="Center">
+                          <TextBlock Classes="mono" Text="{Binding Id}" TextTrimming="CharacterEllipsis" />
+                          <TextBlock Classes="muted small" Text="{Binding InstalledName}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTextColumn Binding="{Binding Version}" Width="110">
+                    <DataGridTextColumn.Header>
+                      <TextBlock Text="{DynamicResource ColVersion}" />
+                    </DataGridTextColumn.Header>
+                  </DataGridTextColumn>
+                  <DataGridTextColumn Binding="{Binding Source}" Width="100">
+                    <DataGridTextColumn.Header>
+                      <TextBlock Text="{DynamicResource ColSource}" />
+                    </DataGridTextColumn.Header>
+                  </DataGridTextColumn>
+                  <DataGridTemplateColumn Width="150" SortMemberPath="StateText">
+                    <DataGridTemplateColumn.Header>
+                      <TextBlock Text="{DynamicResource ColPreview}" />
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <Border Classes="badge" Classes.safe="{Binding IsNew}" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                IsVisible="{Binding StateText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                          <TextBlock Text="{Binding StateText}" />
+                        </Border>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTextColumn Binding="{Binding State}" Width="110">
+                    <DataGridTextColumn.Header>
+                      <TextBlock Text="{DynamicResource ColState}" />
+                    </DataGridTextColumn.Header>
+                  </DataGridTextColumn>
+                  <DataGridTemplateColumn Width="50" CanUserSort="False" CanUserReorder="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <Button Classes="icon small delete" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource TipRemoveFromBundle}"
+                                Command="{Binding $parent[UserControl].DataContext.RemoveFromBundleCommand}" CommandParameter="{Binding}">
+                          <PathIcon Data="{StaticResource IconDelete}" />
+                        </Button>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                </DataGrid.Columns>
+              </DataGrid>
+            </Grid>
+          </DockPanel>
+        </Grid>
+      </TabItem>
+    </TabControl>
+  </DockPanel>
+</UserControl>

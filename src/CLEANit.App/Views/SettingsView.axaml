@@ -1,0 +1,338 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             x:Class="CLEANit.App.Views.SettingsView">
+  <ScrollViewer>
+    <StackPanel Spacing="18" MaxWidth="980" HorizontalAlignment="Left">
+      <!-- General -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <PathIcon Data="{StaticResource IconTune}" Width="20" Height="20" Foreground="{DynamicResource BrushAccentText}" />
+            <TextBlock Classes="h2" Text="{DynamicResource HdrGeneral}" />
+          </StackPanel>
+          <Grid Classes="settings" ColumnDefinitions="*,280" RowDefinitions="Auto,Auto,Auto,Auto">
+            <TextBlock Text="{DynamicResource LblLanguage}" />
+            <ComboBox Grid.Column="1" ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}" HorizontalAlignment="Stretch">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Image Classes="flag" Source="{Binding Flag}" />
+                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                  </StackPanel>
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Grid.Row="1" Text="{DynamicResource LblTheme}" />
+            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Themes}" SelectedItem="{Binding SelectedTheme}" HorizontalAlignment="Stretch">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <StackPanel Grid.Row="2">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <PathIcon Data="{StaticResource IconExpert}" Width="15" Height="15" Foreground="{DynamicResource BrushAccentText}" />
+                <TextBlock Text="{DynamicResource LblExpertMode}" VerticalAlignment="Center" />
+              </StackPanel>
+            </StackPanel>
+            <ToggleSwitch Grid.Row="2" Grid.Column="1" IsChecked="{Binding ExpertMode}" OnContent="" OffContent="" HorizontalAlignment="Right" />
+            <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+              <PathIcon Data="{StaticResource IconServer}" Width="15" Height="15" Foreground="{DynamicResource BrushAccentText}" />
+              <TextBlock Text="{DynamicResource LblServerMode}" VerticalAlignment="Center" />
+            </StackPanel>
+            <ToggleSwitch Grid.Row="3" Grid.Column="1" IsChecked="{Binding ServerMode}" OnContent="" OffContent="" HorizontalAlignment="Right"
+                          ToolTip.Tip="{DynamicResource TipServerMode}" />
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <!-- Tray & autostart -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <PathIcon Data="{StaticResource IconTray}" Width="20" Height="20" Foreground="{DynamicResource BrushAccentText}" />
+            <TextBlock Classes="h2" Text="{DynamicResource HdrTray}" />
+          </StackPanel>
+          <Grid Classes="settings" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+            <TextBlock Text="{DynamicResource LblAutostart}" TextWrapping="Wrap" />
+            <ToggleSwitch Grid.Column="1" IsChecked="{Binding Autostart}" OnContent="" OffContent="" />
+            <Border Grid.Row="1" Grid.ColumnSpan="2" Classes="notice moderate" IsVisible="{Binding AutostartMoved}">
+              <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Text="{DynamicResource AutostartMovedText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+                <Button Grid.Column="1" Margin="10,0,0,0" Command="{Binding RepairAutostartCommand}">
+                  <ctl:IconLabel Icon="{StaticResource IconWrench}" Text="{DynamicResource BtnRepair}" />
+                </Button>
+              </Grid>
+            </Border>
+            <TextBlock Grid.Row="2" Text="{DynamicResource LblCloseToTray}" TextWrapping="Wrap" />
+            <ToggleSwitch Grid.Row="2" Grid.Column="1" IsChecked="{Binding CloseToTray}" OnContent="" OffContent="" />
+            <TextBlock Grid.Row="3" Text="{DynamicResource LblNotifications}" />
+            <ToggleSwitch Grid.Row="3" Grid.Column="1" IsChecked="{Binding Notifications}" OnContent="" OffContent="" />
+            <TextBlock Grid.Row="4" Text="{DynamicResource LblReminder}" TextWrapping="Wrap" />
+            <ToggleSwitch Grid.Row="4" Grid.Column="1" IsChecked="{Binding ReminderEnabled}" OnContent="" OffContent="" />
+            <TextBlock Grid.Row="5" Text="{DynamicResource LblReminderDays}" />
+            <NumericUpDown Grid.Row="5" Grid.Column="1" Value="{Binding ReminderDays}" Minimum="1" Maximum="90" Increment="1" FormatString="0" Width="130"
+                           HorizontalAlignment="Right" IsEnabled="{Binding ReminderEnabled}" />
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <!-- Cleaning -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <PathIcon Data="{StaticResource IconBroom}" Width="20" Height="20" Foreground="{DynamicResource BrushAccentText}" />
+            <TextBlock Classes="h2" Text="{DynamicResource HdrCleaning}" />
+          </StackPanel>
+          <Grid Classes="settings" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
+            <StackPanel IsVisible="{Binding IsExpert}">
+              <TextBlock Text="{DynamicResource LblAllProfiles}" />
+              <TextBlock Classes="muted small" Text="{DynamicResource LblAllProfilesHint}" TextWrapping="Wrap" />
+            </StackPanel>
+            <ToggleSwitch Grid.Column="1" IsChecked="{Binding AllProfiles}" OnContent="" OffContent="" IsVisible="{Binding IsExpert}" />
+            <StackPanel Grid.Row="1">
+              <TextBlock Text="{DynamicResource LblWinapp2}" />
+              <TextBlock Classes="muted small" Text="{DynamicResource LblWinapp2Hint}" TextWrapping="Wrap" />
+            </StackPanel>
+            <ToggleSwitch Grid.Row="1" Grid.Column="1" IsChecked="{Binding UseWinapp2}" OnContent="" OffContent="" />
+            <StackPanel Grid.Row="2">
+              <TextBlock Text="{DynamicResource LblRecycleBin}" />
+              <TextBlock Classes="muted small" Text="{DynamicResource LblRecycleBinHint}" TextWrapping="Wrap" />
+            </StackPanel>
+            <ToggleSwitch Grid.Row="2" Grid.Column="1" IsChecked="{Binding RecycleBin}" OnContent="" OffContent="" />
+          </Grid>
+
+          <!-- Winapp2 source: own block below the switches -->
+          <Border Classes="raised" Padding="12,10" CornerRadius="8" Margin="0,4,0,0" IsEnabled="{Binding UseWinapp2}">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+              <PathIcon Data="{StaticResource IconUsers}" Width="16" Height="16" Foreground="{DynamicResource BrushAccentText}" Margin="0,0,10,0" />
+              <TextBlock Grid.Column="1" Classes="mono small muted" Text="{Binding Winapp2Text}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+              <Button Grid.Column="2" Margin="8,0,0,0" Command="{Binding ResetWinapp2Command}" IsVisible="{Binding HasCustomWinapp2}">
+                <ctl:IconLabel Icon="{StaticResource IconUndo}" Text="{DynamicResource BtnUseBundled}" />
+              </Button>
+              <Button Grid.Column="3" Margin="8,0,0,0" Command="{Binding ImportWinapp2Command}">
+                <ctl:IconLabel Icon="{StaticResource IconFolderOpen}" Text="{DynamicResource BtnImportWinapp2}" />
+              </Button>
+            </Grid>
+          </Border>
+
+          <Border Classes="divider" />
+          <TextBlock Classes="h3" Text="{DynamicResource HdrExclusions}" />
+          <TextBlock Classes="muted small" Text="{DynamicResource ExclusionsHint}" TextWrapping="Wrap" />
+          <TextBox Text="{Binding Exclusions}" AcceptsReturn="True" TextWrapping="NoWrap" MinHeight="90" FontFamily="{DynamicResource MonoFont}" FontSize="12"
+                   Watermark="C:\Projects\Keep&#x0a;%UserProfile%\Archive" />
+          <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+            <Button Command="{Binding AddExclusionCommand}">
+              <ctl:IconLabel Icon="{StaticResource IconFolderOpen}" Text="{DynamicResource BtnAddFolder}" />
+            </Button>
+            <Button Command="{Binding RevertExclusionsCommand}" ToolTip.Tip="{DynamicResource TipRevertExclusions}">
+              <ctl:IconLabel Icon="{StaticResource IconClose}" Text="{DynamicResource BtnCancel}" />
+            </Button>
+            <Button Classes="primary" Command="{Binding SaveExclusionsCommand}">
+              <ctl:IconLabel Icon="{StaticResource IconCheck}" Text="{DynamicResource BtnSave}" />
+            </Button>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <!-- Safety -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <PathIcon Data="{StaticResource IconShield}" Width="20" Height="20" Foreground="{DynamicResource BrushAccentText}" />
+            <TextBlock Classes="h2" Text="{DynamicResource HdrSafety}" />
+          </StackPanel>
+          <Border Classes="notice" IsVisible="{Binding RestoreUnsupported}">
+            <TextBlock Text="{DynamicResource RestoreServerNote}" TextWrapping="Wrap" />
+          </Border>
+          <Grid Classes="settings" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" IsEnabled="{Binding RestoreSupported}">
+            <TextBlock Text="{DynamicResource LblRestoreUninstall}" TextWrapping="Wrap" />
+            <ToggleSwitch Grid.Column="1" IsChecked="{Binding RestoreBeforeUninstall}" OnContent="" OffContent="" />
+            <TextBlock Grid.Row="1" Text="{DynamicResource LblRestoreDeep}" TextWrapping="Wrap" />
+            <ToggleSwitch Grid.Row="1" Grid.Column="1" IsChecked="{Binding RestoreBeforeDeep}" OnContent="" OffContent="" />
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <!-- Updates -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <PathIcon Data="{StaticResource IconUpdates}" Width="20" Height="20" Foreground="{DynamicResource BrushAccentText}" />
+            <TextBlock Classes="h2" Text="{DynamicResource HdrUpdates}" />
+          </StackPanel>
+          <Grid Classes="settings" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+            <TextBlock Text="{DynamicResource LblWingetBackground}" TextWrapping="Wrap" />
+            <ToggleSwitch Grid.Column="1" IsChecked="{Binding WingetBackground}" OnContent="" OffContent="" />
+            <TextBlock Grid.Row="1" Text="{DynamicResource LblWingetInterval}" />
+            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Intervals}" SelectedItem="{Binding WingetInterval}" Width="160"
+                      HorizontalAlignment="Right" IsEnabled="{Binding WingetBackground}" />
+            <TextBlock Grid.Row="2" Text="{DynamicResource LblWingetAgreements}" TextWrapping="Wrap" />
+            <Button Grid.Row="2" Grid.Column="1" Command="{Binding RevokeWingetCommand}" IsEnabled="{Binding WingetAccepted}" HorizontalAlignment="Right"
+                    Width="160" HorizontalContentAlignment="Center">
+              <ctl:IconLabel Icon="{StaticResource IconUndo}" Text="{DynamicResource BtnRevoke}" />
+            </Button>
+            <TextBlock Grid.Row="3" Text="{DynamicResource LblReleaseCheck}" TextWrapping="Wrap" />
+            <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+              <Button Classes="icon" Command="{Binding CheckReleaseNowCommand}" ToolTip.Tip="{Binding CheckNowTip}">
+                <PathIcon Data="{StaticResource IconRefresh}" />
+              </Button>
+              <ToggleSwitch IsChecked="{Binding UpdateCheck}" OnContent="" OffContent="" MinWidth="0" />
+            </StackPanel>
+            <TextBlock Grid.Row="4" Text="{DynamicResource LblChocolatey}" TextWrapping="Wrap" />
+            <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Center">
+              <!-- Chocolatey missing: one-click install through winget (official package, nothing shipped with CLEANit) -->
+              <ProgressBar IsIndeterminate="True" Width="80" VerticalAlignment="Center" IsVisible="{Binding IsInstallingChocolatey}" />
+              <Button Command="{Binding InstallChocolateyCommand}" IsVisible="{Binding ChocolateyMissing}" ToolTip.Tip="{DynamicResource TipInstallChocolatey}">
+                <ctl:IconLabel Icon="{StaticResource IconDownload}" Text="{DynamicResource BtnInstallChocolatey}" />
+              </Button>
+              <Panel Background="Transparent" VerticalAlignment="Center" ToolTip.Tip="{Binding ChocolateyTip}">
+                <ToggleSwitch IsChecked="{Binding Chocolatey}" IsEnabled="{Binding ChocolateyAvailable}" OnContent="" OffContent="" MinWidth="0" />
+              </Panel>
+            </StackPanel>
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <!-- Drive health -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <PathIcon Data="{StaticResource IconHealth}" Width="20" Height="20" Foreground="{DynamicResource BrushAccentText}" />
+            <TextBlock Classes="h2" Text="{DynamicResource HdrDriveHealth}" />
+          </StackPanel>
+          <Grid Classes="settings" ColumnDefinitions="*,Auto">
+            <TextBlock Text="{DynamicResource LblDriveRefresh}" TextWrapping="Wrap" />
+            <ComboBox Grid.Column="1" ItemsSource="{Binding DriveRefreshOptions}" SelectedIndex="{Binding DriveRefreshIndex}" Width="160"
+                      HorizontalAlignment="Right" />
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <!-- Backups -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+            <PathIcon Data="{StaticResource IconBackup}" Width="20" Height="20" Foreground="{DynamicResource BrushAccentText}" Margin="0,0,8,0" />
+            <TextBlock Grid.Column="1" Classes="h2" Text="{DynamicResource HdrBackups}" />
+            <Border Grid.Column="2" Classes="pill accent" Margin="0,0,8,0" VerticalAlignment="Center">
+              <TextBlock Text="{Binding BackupSummary}" />
+            </Border>
+            <Button Grid.Column="3" Classes="primary" Command="{Binding RefreshBackupsCommand}">
+              <ctl:IconLabel Icon="{StaticResource IconRefresh}" Text="{DynamicResource BtnRefresh}" />
+            </Button>
+          </Grid>
+          <Border Classes="tablehead">
+            <Grid ColumnDefinitions="130,*,140,90,100">
+              <TextBlock Classes="section column" Text="{DynamicResource ColKind}" />
+              <TextBlock Grid.Column="1" Classes="section column" Text="{DynamicResource ColName}" />
+              <TextBlock Grid.Column="2" Classes="section column" Text="{DynamicResource ColTime}" />
+              <TextBlock Grid.Column="3" Classes="section column" Text="{DynamicResource ColSize}" HorizontalAlignment="Right" />
+            </Grid>
+          </Border>
+          <TextBlock Classes="muted" Text="{DynamicResource BackupsEmpty}" IsVisible="{Binding !HasBackups}" Margin="10,4" />
+          <ScrollViewer MaxHeight="300">
+            <ItemsControl ItemsSource="{Binding Backups}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border Classes="tablerow">
+                    <Grid ColumnDefinitions="130,*,140,90,100">
+                      <Border Classes="badge" HorizontalAlignment="Left">
+                        <TextBlock Text="{Binding KindText}" />
+                      </Border>
+                      <TextBlock Grid.Column="1" Text="{Binding Title}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Item.Path}" />
+                      <TextBlock Grid.Column="2" Classes="muted" Text="{Binding Time}" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="3" Text="{Binding Size}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                      <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right">
+                        <Button Classes="icon small restore" ToolTip.Tip="{DynamicResource BtnRestore}" IsVisible="{Binding Item.CanRestore}"
+                                Command="{Binding $parent[UserControl].DataContext.RestoreBackupCommand}" CommandParameter="{Binding}">
+                          <PathIcon Data="{StaticResource IconUndo}" />
+                        </Button>
+                        <Button Classes="icon small" ToolTip.Tip="{DynamicResource TipOpenFolder}"
+                                Command="{Binding $parent[UserControl].DataContext.OpenBackupCommand}" CommandParameter="{Binding}">
+                          <PathIcon Data="{StaticResource IconFolderOpen}" />
+                        </Button>
+                        <Button Classes="icon small delete" ToolTip.Tip="{DynamicResource BtnDelete}"
+                                Command="{Binding $parent[UserControl].DataContext.DeleteBackupCommand}" CommandParameter="{Binding}">
+                          <PathIcon Data="{StaticResource IconDelete}" />
+                        </Button>
+                      </StackPanel>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+          <Grid Classes="settings" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" Margin="0,6,0,0">
+            <TextBlock Text="{DynamicResource LblBackupCleanup}" TextWrapping="Wrap" />
+            <ToggleSwitch Grid.Column="1" IsChecked="{Binding BackupCleanup}" OnContent="" OffContent="" />
+            <TextBlock Grid.Row="1" Text="{DynamicResource LblBackupKeepDays}" />
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+              <NumericUpDown Value="{Binding BackupKeepDays}" Minimum="7" Maximum="3650" Increment="30" FormatString="0" Width="130" />
+              <Button Command="{Binding CleanupBackupsNowCommand}">
+                <ctl:IconLabel Icon="{StaticResource IconDeleteSweep}" Text="{DynamicResource BtnCleanupNow}" />
+              </Button>
+            </StackPanel>
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <!-- Data -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <PathIcon Data="{StaticResource IconFolderCog}" Width="20" Height="20" Foreground="{DynamicResource BrushAccentText}" />
+            <TextBlock Classes="h2" Text="{DynamicResource HdrData}" />
+          </StackPanel>
+          <Border Classes="pill neutral" HorizontalAlignment="Left">
+            <TextBlock Classes="mono" Text="{Binding DataFolder}" TextTrimming="CharacterEllipsis" />
+          </Border>
+          <WrapPanel HorizontalAlignment="Right">
+            <Button Margin="8,0,0,8" Command="{Binding OpenFolderCommand}" CommandParameter="data">
+              <ctl:IconLabel Icon="{StaticResource IconFolderOpen}" Text="{DynamicResource BtnDataFolder}" />
+            </Button>
+            <Button Margin="8,0,0,8" Command="{Binding OpenFolderCommand}" CommandParameter="logs">
+              <ctl:IconLabel Icon="{StaticResource IconDocument}" Text="{DynamicResource BtnReports}" />
+            </Button>
+            <Button Margin="8,0,0,8" Command="{Binding OpenFolderCommand}" CommandParameter="backups">
+              <ctl:IconLabel Icon="{StaticResource IconRestore}" Text="{DynamicResource BtnBackups}" />
+            </Button>
+            <Button Margin="8,0,0,8" Command="{Binding OpenFolderCommand}" CommandParameter="rules">
+              <ctl:IconLabel Icon="{StaticResource IconFormatList}" Text="{DynamicResource BtnCustomRules}" />
+            </Button>
+          </WrapPanel>
+        </StackPanel>
+      </Border>
+
+      <!-- Reset CLEANit: delete own data (settings, reports, caches, backups, rules) – CLEANit restarts to do it -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <PathIcon Data="{StaticResource IconBackupRestore}" Width="20" Height="20" Foreground="{DynamicResource BrushAccentText}" />
+            <TextBlock Classes="h2" Text="{DynamicResource HdrReset}" />
+          </StackPanel>
+          <TextBlock Classes="muted small" Text="{DynamicResource ResetHint}" TextWrapping="Wrap" />
+          <Grid Classes="settings" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+            <TextBlock Text="{DynamicResource LblResetAll}" FontWeight="SemiBold" TextWrapping="Wrap" />
+            <ToggleSwitch Grid.Column="1" IsChecked="{Binding ResetAll}" OnContent="" OffContent="" />
+            <TextBlock Grid.Row="1" Text="{DynamicResource ResetPartSettings}" TextWrapping="Wrap" IsEnabled="{Binding ResetPartsEnabled}" />
+            <ToggleSwitch Grid.Row="1" Grid.Column="1" IsChecked="{Binding ResetSettings}" IsEnabled="{Binding ResetPartsEnabled}" OnContent="" OffContent="" />
+            <TextBlock Grid.Row="2" Text="{DynamicResource ResetPartReports}" TextWrapping="Wrap" IsEnabled="{Binding ResetPartsEnabled}" />
+            <ToggleSwitch Grid.Row="2" Grid.Column="1" IsChecked="{Binding ResetReports}" IsEnabled="{Binding ResetPartsEnabled}" OnContent="" OffContent="" />
+            <TextBlock Grid.Row="3" Text="{DynamicResource ResetPartCaches}" TextWrapping="Wrap" IsEnabled="{Binding ResetPartsEnabled}" />
+            <ToggleSwitch Grid.Row="3" Grid.Column="1" IsChecked="{Binding ResetCaches}" IsEnabled="{Binding ResetPartsEnabled}" OnContent="" OffContent="" />
+            <TextBlock Grid.Row="4" Text="{DynamicResource ResetPartBackups}" TextWrapping="Wrap" IsEnabled="{Binding ResetPartsEnabled}" />
+            <ToggleSwitch Grid.Row="4" Grid.Column="1" IsChecked="{Binding ResetBackups}" IsEnabled="{Binding ResetPartsEnabled}" OnContent="" OffContent="" />
+            <TextBlock Grid.Row="5" Text="{DynamicResource ResetPartRules}" TextWrapping="Wrap" IsEnabled="{Binding ResetPartsEnabled}" />
+            <ToggleSwitch Grid.Row="5" Grid.Column="1" IsChecked="{Binding ResetRules}" IsEnabled="{Binding ResetPartsEnabled}" OnContent="" OffContent="" />
+          </Grid>
+          <Button Classes="danger" HorizontalAlignment="Right" Command="{Binding ResetAppCommand}">
+            <ctl:IconLabel Icon="{StaticResource IconBackupRestore}" Text="{DynamicResource BtnResetApp}" />
+          </Button>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

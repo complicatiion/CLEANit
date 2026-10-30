@@ -1,0 +1,158 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             x:Class="CLEANit.App.Views.UpdatesView">
+  <DockPanel>
+
+    <!-- winget missing -->
+    <Border DockPanel.Dock="Top" Classes="notice moderate" IsVisible="{Binding IsMissing}" Margin="0,0,0,12">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <PathIcon Data="{StaticResource IconAlert}" Width="18" Height="18" Foreground="{DynamicResource BrushModerate}" />
+        <TextBlock Text="{DynamicResource WingetMissing}" TextWrapping="Wrap" MaxWidth="900" />
+      </StackPanel>
+    </Border>
+
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,12">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Classes="primary" Command="{Binding CheckCommand}" IsEnabled="{Binding IsAvailable}">
+          <ctl:IconLabel Icon="{StaticResource IconRefresh}" Text="{DynamicResource BtnCheckUpdates}" />
+        </Button>
+        <Button Classes="icon" Command="{Binding SelectAllCommand}" ToolTip.Tip="{DynamicResource TipSelectAll}">
+          <PathIcon Data="{StaticResource IconSelectAll}" />
+        </Button>
+        <Button Classes="icon" Command="{Binding SelectNoneCommand}" ToolTip.Tip="{DynamicResource TipSelectNone}">
+          <PathIcon Data="{StaticResource IconSelectNone}" />
+        </Button>
+        <Border Classes="divider" Width="1" Height="24" Margin="4,0" />
+        <Button Classes="icon" Command="{Binding ExportCommand}" IsVisible="{Binding IsExpert}" ToolTip.Tip="{DynamicResource BtnExportInventory}">
+          <PathIcon Data="{StaticResource IconExport}" />
+        </Button>
+        <Button Classes="icon" Command="{Binding ImportCommand}" IsVisible="{Binding IsExpert}" ToolTip.Tip="{DynamicResource BtnImportInventory}">
+          <PathIcon Data="{StaticResource IconImport}" />
+        </Button>
+        <!-- Show / hide ignored packages (eye; highlighted while shown) -->
+        <Button Classes="icon" Classes.active="{Binding ShowIgnored}" Command="{Binding ToggleShowIgnoredCommand}" ToolTip.Tip="{Binding ShowIgnoredTip}">
+          <Panel>
+            <PathIcon Data="{StaticResource IconEye}" IsVisible="{Binding ShowIgnored}" />
+            <PathIcon Data="{StaticResource IconEyeOff}" IsVisible="{Binding !ShowIgnored}" />
+          </Panel>
+        </Button>
+      </StackPanel>
+      <StackPanel Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+        <TextBlock Classes="muted small" Text="{Binding LastCheckText}" HorizontalAlignment="Right" />
+        <TextBlock Classes="muted small" Text="{Binding VersionText}" HorizontalAlignment="Right" />
+      </StackPanel>
+    </Grid>
+
+    <!-- Action bar: compact legal note, secondary "Update all", main action right -->
+    <Border DockPanel.Dock="Bottom" Classes="card" Padding="16,12" Margin="0,12,0,0">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel VerticalAlignment="Center" Spacing="4">
+          <TextBlock Classes="muted small" Text="{DynamicResource UpdatesLegal}" TextWrapping="Wrap" />
+          <StackPanel Spacing="4" IsVisible="{Binding IsBusy}">
+            <ProgressBar IsIndeterminate="True" />
+            <TextBlock Classes="muted small" Text="{Binding Status}" />
+          </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="16,0,0,0" VerticalAlignment="Center">
+          <Button Classes="fixed" Command="{Binding UpdateAllCommand}">
+            <ctl:IconLabel Icon="{StaticResource IconPackageUp}" Text="{DynamicResource BtnUpdateAll}" />
+          </Button>
+          <Button Classes="primary fixed" Command="{Binding UpdateSelectedCommand}">
+            <ctl:IconLabel Icon="{StaticResource IconPackageUp}" Text="{DynamicResource BtnUpdateSelected}" />
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- winget output (animated expander) -->
+    <Expander DockPanel.Dock="Bottom" Header="{DynamicResource HdrWingetOutput}" Margin="0,10,0,0">
+      <TextBox Text="{Binding Output}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="NoWrap" FontFamily="{DynamicResource MonoFont}"
+               FontSize="12" MaxHeight="220" />
+    </Expander>
+
+    <Grid>
+      <TextBlock Classes="muted" Text="{DynamicResource UpdatesEmpty}" IsVisible="{Binding !HasRows}" HorizontalAlignment="Center" Margin="0,40" />
+      <DataGrid ItemsSource="{Binding Rows}" IsVisible="{Binding HasRows}">
+        <DataGrid.Columns>
+          <DataGridTemplateColumn Width="44" CanUserSort="False" CanUserReorder="False" CanUserResize="False">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <CheckBox IsChecked="{Binding IsChecked}" IsEnabled="{Binding !IsIgnored}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Width="2*" SortMemberPath="Name">
+            <DataGridTemplateColumn.Header>
+              <TextBlock Text="{DynamicResource ColProgram}" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <StackPanel VerticalAlignment="Center" Margin="0,0,10,0" Opacity="{Binding IsIgnored, Converter={x:Static ctl:Converters.IgnoredOpacity}}">
+                  <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                  <TextBlock Classes="small warning" Text="{DynamicResource UpdateExplicit}" IsVisible="{Binding ExplicitOnly}" />
+                  <TextBlock Classes="small muted" Text="{DynamicResource UpdateIgnored}" IsVisible="{Binding IsIgnored}" />
+                </StackPanel>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Width="1.6*" SortMemberPath="Id">
+            <DataGridTemplateColumn.Header>
+              <TextBlock Text="{DynamicResource ColId}" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Classes="mono small muted" Text="{Binding Id}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Id}" />
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTextColumn Binding="{Binding Versions}" Width="1.4*">
+            <DataGridTextColumn.Header>
+              <TextBlock Text="{DynamicResource ColVersion}" />
+            </DataGridTextColumn.Header>
+          </DataGridTextColumn>
+          <DataGridTextColumn Binding="{Binding Source}" Width="90">
+            <DataGridTextColumn.Header>
+              <TextBlock Text="{DynamicResource ColSource}" />
+            </DataGridTextColumn.Header>
+          </DataGridTextColumn>
+          <DataGridTextColumn Binding="{Binding State}" Width="120">
+            <DataGridTextColumn.Header>
+              <TextBlock Text="{DynamicResource ColState}" />
+            </DataGridTextColumn.Header>
+          </DataGridTextColumn>
+          <!-- Actions: launch · ignore · update (accent symbol) -->
+          <DataGridTemplateColumn Width="110" CanUserSort="False" CanUserReorder="False">
+            <DataGridTemplateColumn.Header>
+              <TextBlock Text="{DynamicResource ColActions}" />
+            </DataGridTemplateColumn.Header>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                  <Button Classes="icon small" ToolTip.Tip="{DynamicResource TipLaunchApp}" IsEnabled="{Binding CanLaunch}"
+                          Command="{Binding $parent[UserControl].DataContext.LaunchCommand}" CommandParameter="{Binding}">
+                    <PathIcon Data="{StaticResource IconOpenApp}" />
+                  </Button>
+                  <Panel Width="28">
+                    <Button Classes="icon small" ToolTip.Tip="{DynamicResource TipIgnorePackage}" IsVisible="{Binding !IsIgnored}"
+                            Command="{Binding $parent[UserControl].DataContext.ToggleIgnoreCommand}" CommandParameter="{Binding}">
+                      <PathIcon Data="{StaticResource IconEyeOff}" />
+                    </Button>
+                    <Button Classes="icon small" ToolTip.Tip="{DynamicResource TipUnignorePackage}" IsVisible="{Binding IsIgnored}"
+                            Command="{Binding $parent[UserControl].DataContext.ToggleIgnoreCommand}" CommandParameter="{Binding}">
+                      <PathIcon Data="{StaticResource IconEye}" />
+                    </Button>
+                  </Panel>
+                  <Button Classes="icon small highlight" ToolTip.Tip="{DynamicResource BtnUpdateNow}" IsEnabled="{Binding !IsIgnored}"
+                          Command="{Binding $parent[UserControl].DataContext.UpdateOneCommand}" CommandParameter="{Binding}">
+                    <PathIcon Data="{StaticResource IconPackageUp}" />
+                  </Button>
+                </StackPanel>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+    </Grid>
+  </DockPanel>
+</UserControl>

@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             x:Class="CLEANit.App.Views.CommandLineView">
+  <ScrollViewer>
+    <StackPanel Spacing="16" MaxWidth="1100" HorizontalAlignment="Left">
+      <Border Classes="card">
+        <StackPanel Spacing="10">
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Classes="h2" Text="{DynamicResource HdrCliUsage}" />
+            <Button Grid.Column="1" Classes="icon" Command="{Binding CopyCommand}" CommandParameter="{Binding Usage}" ToolTip.Tip="{DynamicResource TipCopy}">
+              <PathIcon Data="{StaticResource IconCopy}" />
+            </Button>
+          </Grid>
+          <SelectableTextBlock Classes="mono small" Text="{Binding Usage}" TextWrapping="NoWrap" />
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card">
+        <StackPanel Spacing="10">
+          <TextBlock Classes="h2" Text="{DynamicResource HdrCliExamples}" />
+          <ItemsControl ItemsSource="{Binding Examples}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Spacing="4" Margin="0,0,0,12">
+                  <TextBlock Classes="muted small" Text="{Binding Description}" />
+                  <Border Classes="raised" Padding="10,8" CornerRadius="6">
+                    <Grid ColumnDefinitions="*,Auto">
+                      <SelectableTextBlock Classes="mono small" Text="{Binding Command}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                      <Button Grid.Column="1" Classes="icon small" Command="{Binding $parent[UserControl].DataContext.CopyCommand}" CommandParameter="{Binding Command}"
+                              ToolTip.Tip="{DynamicResource TipCopy}">
+                        <PathIcon Data="{StaticResource IconCopy}" />
+                      </Button>
+                    </Grid>
+                  </Border>
+                </StackPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card">
+        <StackPanel Spacing="10">
+          <TextBlock Classes="h2" Text="{DynamicResource HdrCliProfiles}" />
+          <ItemsControl ItemsSource="{Binding ProfileIds}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <SelectableTextBlock Classes="mono small" Text="{Binding}" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Classes="muted small" Text="{DynamicResource CliNote}" TextWrapping="Wrap" />
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

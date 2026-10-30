@@ -1,0 +1,140 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             x:Class="CLEANit.App.Views.ReportsView">
+  <DockPanel>
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+      <Border Classes="pill accent" HorizontalAlignment="Left" VerticalAlignment="Center">
+        <TextBlock Text="{Binding TotalText}" />
+      </Border>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+        <Button Command="{Binding ClearAllCommand}" IsEnabled="{Binding HasRows}">
+          <ctl:IconLabel Icon="{StaticResource IconDeleteSweep}" Text="{DynamicResource BtnClearAll}" />
+        </Button>
+        <Button Command="{Binding OpenFolderCommand}">
+          <ctl:IconLabel Icon="{StaticResource IconFolderOpen}" Text="{DynamicResource BtnOpenFolder}" />
+        </Button>
+        <Button Classes="primary" Command="{Binding RefreshCommand}">
+          <ctl:IconLabel Icon="{StaticResource IconRefresh}" Text="{DynamicResource BtnRefresh}" />
+        </Button>
+      </StackPanel>
+    </Grid>
+
+    <Grid ColumnDefinitions="*,14,1.1*">
+      <!-- Report list -->
+      <Grid>
+        <TextBlock Classes="muted" Text="{DynamicResource HistoryEmpty}" IsVisible="{Binding !HasRows}" HorizontalAlignment="Center" Margin="0,40" TextWrapping="Wrap" />
+        <DataGrid ItemsSource="{Binding Rows}" SelectedItem="{Binding Selected, Mode=TwoWay}" IsVisible="{Binding HasRows}">
+          <DataGrid.Columns>
+            <DataGridTextColumn Binding="{Binding Time}" Width="1.3*" SortMemberPath="TimeUtc">
+              <DataGridTextColumn.Header>
+                <TextBlock Text="{DynamicResource ColTime}" />
+              </DataGridTextColumn.Header>
+            </DataGridTextColumn>
+            <DataGridTemplateColumn Width="1.4*" SortMemberPath="Area">
+              <DataGridTemplateColumn.Header>
+                <TextBlock Text="{DynamicResource ColArea}" />
+              </DataGridTemplateColumn.Header>
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate>
+                  <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Area}" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                    <Border Classes="badge moderate" IsVisible="{Binding Cancelled}">
+                      <TextBlock Text="{DynamicResource BadgeCancelled}" />
+                    </Border>
+                  </StackPanel>
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Width="100" SortMemberPath="Bytes">
+              <DataGridTemplateColumn.Header>
+                <TextBlock Text="{DynamicResource ColFreed}" />
+              </DataGridTemplateColumn.Header>
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Freed}" FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Width="90" SortMemberPath="FileCount">
+              <DataGridTemplateColumn.Header>
+                <TextBlock Text="{DynamicResource ColFiles}" />
+              </DataGridTemplateColumn.Header>
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate>
+                  <TextBlock Classes="muted" Text="{Binding Files}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Width="90" SortMemberPath="SkippedCount">
+              <DataGridTemplateColumn.Header>
+                <TextBlock Text="{DynamicResource ColSkipped}" />
+              </DataGridTemplateColumn.Header>
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate>
+                  <TextBlock Classes="muted" Text="{Binding Skipped}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+          </DataGrid.Columns>
+        </DataGrid>
+      </Grid>
+
+      <!-- Details -->
+      <Border Grid.Column="2" Classes="card">
+        <Grid>
+          <StackPanel IsVisible="{Binding !HasSelection}" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10">
+            <PathIcon Data="{StaticResource IconReport}" Width="34" Height="34" Foreground="{DynamicResource BrushTextDisabled}" />
+            <TextBlock Classes="muted" Text="{DynamicResource ReportsHint}" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="300" />
+          </StackPanel>
+          <DockPanel IsVisible="{Binding HasSelection}">
+            <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+              <StackPanel Spacing="4">
+                <TextBlock Classes="h2" Text="{Binding DetailTitle}" TextWrapping="Wrap" />
+                <TextBlock Classes="muted small" Text="{Binding DetailSummary}" TextWrapping="Wrap" />
+              </StackPanel>
+              <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Top">
+                <Button Classes="icon" Command="{Binding ExportCsvCommand}" ToolTip.Tip="{DynamicResource BtnExportCsv}">
+                  <PathIcon Data="{StaticResource IconCsv}" />
+                </Button>
+                <Button Classes="icon" Command="{Binding ExportHtmlCommand}" ToolTip.Tip="{DynamicResource BtnExportHtml}">
+                  <PathIcon Data="{StaticResource IconExport}" />
+                </Button>
+                <Button Classes="icon delete" Command="{Binding DeleteCommand}" ToolTip.Tip="{DynamicResource BtnDelete}">
+                  <PathIcon Data="{StaticResource IconDelete}" />
+                </Button>
+              </StackPanel>
+            </Grid>
+            <Border DockPanel.Dock="Top" Classes="tablehead">
+              <Grid ColumnDefinitions="*,90,80,80">
+                <TextBlock Classes="section column" Text="{DynamicResource ColRule}" />
+                <TextBlock Grid.Column="1" Classes="section column" Text="{DynamicResource ColFreed}" HorizontalAlignment="Right" />
+                <TextBlock Grid.Column="2" Classes="section column" Text="{DynamicResource ColFiles}" HorizontalAlignment="Right" />
+                <TextBlock Grid.Column="3" Classes="section column" Text="{DynamicResource ColSkipped}" HorizontalAlignment="Right" />
+              </Grid>
+            </Border>
+            <ScrollViewer>
+              <ItemsControl ItemsSource="{Binding Details}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Border Classes="tablerow">
+                      <StackPanel Spacing="4">
+                        <Grid ColumnDefinitions="*,90,80,80">
+                          <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                          <TextBlock Grid.Column="1" Text="{Binding Freed}" FontWeight="SemiBold" HorizontalAlignment="Right" />
+                          <TextBlock Grid.Column="2" Classes="muted" Text="{Binding Files}" HorizontalAlignment="Right" />
+                          <TextBlock Grid.Column="3" Classes="muted" Text="{Binding Skipped}" HorizontalAlignment="Right" />
+                        </Grid>
+                        <TextBlock Classes="small deep" Text="{Binding Errors}" IsVisible="{Binding HasErrors}" TextWrapping="Wrap" />
+                      </StackPanel>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </DockPanel>
+        </Grid>
+      </Border>
+    </Grid>
+  </DockPanel>
+</UserControl>

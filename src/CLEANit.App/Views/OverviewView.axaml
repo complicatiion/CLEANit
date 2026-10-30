@@ -1,0 +1,207 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             x:Class="CLEANit.App.Views.OverviewView">
+  <UserControl.Styles>
+    <Style Selector="Border.stat">
+      <Setter Property="Margin" Value="6" />
+      <Setter Property="Padding" Value="18,14" />
+    </Style>
+    <Style Selector="Border.stat TextBlock.freed">
+      <Setter Property="FontSize" Value="40" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Margin" Value="0,10" />
+    </Style>
+    <Style Selector="Border.stat TextBlock.counter">
+      <Setter Property="FontSize" Value="26" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Margin" Value="0,4,0,0" />
+    </Style>
+  </UserControl.Styles>
+
+  <ScrollViewer>
+    <StackPanel Spacing="18" MaxWidth="1280" HorizontalAlignment="Stretch">
+
+      <!-- New CLEANit release (opt-in check) -->
+      <Border Classes="notice" IsVisible="{Binding Main.HasNewRelease}">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+          <PathIcon Data="{StaticResource IconDownloadCircle}" Width="20" Height="20" Foreground="{DynamicResource BrushAccentText}" Margin="0,0,10,0" />
+          <TextBlock Grid.Column="1" Text="{Binding Main.NewReleaseText}" VerticalAlignment="Center" FontWeight="SemiBold" />
+          <Button Grid.Column="2" Command="{Binding Main.OpenReleaseCommand}">
+            <ctl:IconLabel Icon="{StaticResource IconOpenInNew}" Text="{DynamicResource BtnOpenRelease}" />
+          </Button>
+        </Grid>
+      </Border>
+
+      <!-- Statistics: space freed as the large card, six counters next to it -->
+      <Grid ColumnDefinitions="1.25*,3*" Margin="-6">
+        <Border Classes="card stat" Padding="22,18">
+          <Grid RowDefinitions="Auto,*">
+            <TextBlock Classes="section" Text="{DynamicResource OverviewFreedTotal}" Foreground="{DynamicResource BrushAccentText}" />
+            <ctl:CounterText Grid.Row="1" Classes="freed" Value="{Binding FreedBytes}" IsBytes="True" VerticalAlignment="Center"
+                             Foreground="{DynamicResource BrushAccentText}" />
+          </Grid>
+        </Border>
+      <UniformGrid Grid.Column="1" Columns="3">
+        <Border Classes="card stat">
+          <StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <PathIcon Data="{StaticResource IconHistory}" Width="16" Height="16" Foreground="{DynamicResource BrushAccentText}" />
+              <TextBlock Classes="section" Text="{DynamicResource StatRuns}" />
+            </StackPanel>
+            <ctl:CounterText Classes="counter" Value="{Binding Runs}" />
+          </StackPanel>
+        </Border>
+        <Border Classes="card stat">
+          <StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <PathIcon Data="{StaticResource IconFiles}" Width="16" Height="16" Foreground="{DynamicResource BrushAccentText}" />
+              <TextBlock Classes="section" Text="{DynamicResource StatFiles}" />
+            </StackPanel>
+            <ctl:CounterText Classes="counter" Value="{Binding FilesRemoved}" />
+          </StackPanel>
+        </Border>
+        <Border Classes="card stat">
+          <StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <PathIcon Data="{StaticResource IconFormatList}" Width="16" Height="16" Foreground="{DynamicResource BrushAccentText}" />
+              <TextBlock Classes="section" Text="{DynamicResource StatRules}" />
+            </StackPanel>
+            <ctl:CounterText Classes="counter" Value="{Binding Rules}" />
+          </StackPanel>
+        </Border>
+        <Border Classes="card stat">
+          <StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <PathIcon Data="{StaticResource IconUsers}" Width="16" Height="16" Foreground="{DynamicResource BrushAccentText}" />
+              <TextBlock Classes="section" Text="{DynamicResource StatCommunity}" />
+            </StackPanel>
+            <ctl:CounterText Classes="counter" Value="{Binding CommunityRules}" />
+          </StackPanel>
+        </Border>
+        <Border Classes="card stat">
+          <StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <PathIcon Data="{StaticResource IconPrograms}" Width="16" Height="16" Foreground="{DynamicResource BrushAccentText}" />
+              <TextBlock Classes="section" Text="{DynamicResource StatPrograms}" />
+            </StackPanel>
+            <ctl:CounterText Classes="counter" Value="{Binding Programs}" />
+          </StackPanel>
+        </Border>
+        <Border Classes="card stat">
+          <StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <PathIcon Data="{StaticResource IconUpdates}" Width="16" Height="16" Foreground="{DynamicResource BrushAccentText}" />
+              <TextBlock Classes="section" Text="{DynamicResource StatUpdates}" />
+            </StackPanel>
+            <ctl:CounterText Classes="counter" Value="{Binding Updates}" />
+          </StackPanel>
+        </Border>
+      </UniformGrid>
+      </Grid>
+
+      <!-- Quick actions -->
+      <UniformGrid Columns="4" Margin="-6,0">
+        <Border Classes="card" Margin="6,0">
+          <StackPanel Spacing="10">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <PathIcon Data="{StaticResource IconDeleteSweep}" Width="22" Height="22" Foreground="{DynamicResource BrushAccentText}" />
+              <TextBlock Classes="h3" Text="{DynamicResource NavFull}" />
+            </StackPanel>
+            <TextBlock Classes="muted small" Text="{DynamicResource QuickFull}" TextWrapping="Wrap" />
+            <Button Command="{Binding AnalyzeAreaCommand}" CommandParameter="Full">
+              <ctl:IconLabel Icon="{StaticResource IconAnalyze}" Text="{DynamicResource BtnAnalyze}" />
+            </Button>
+          </StackPanel>
+        </Border>
+        <Border Classes="card" Margin="6,0">
+          <StackPanel Spacing="10">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <PathIcon Data="{StaticResource IconSystem}" Width="22" Height="22" Foreground="{DynamicResource BrushCatSystem}" />
+              <TextBlock Classes="h3" Text="{DynamicResource NavSystem}" />
+            </StackPanel>
+            <TextBlock Classes="muted small" Text="{DynamicResource QuickSystem}" TextWrapping="Wrap" />
+            <Button Command="{Binding AnalyzeAreaCommand}" CommandParameter="System">
+              <ctl:IconLabel Icon="{StaticResource IconAnalyze}" Text="{DynamicResource BtnAnalyze}" />
+            </Button>
+          </StackPanel>
+        </Border>
+        <Border Classes="card" Margin="6,0">
+          <StackPanel Spacing="10">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <PathIcon Data="{StaticResource IconBrowser}" Width="22" Height="22" Foreground="{DynamicResource BrushCatBrowser}" />
+              <TextBlock Classes="h3" Text="{DynamicResource NavBrowser}" />
+            </StackPanel>
+            <TextBlock Classes="muted small" Text="{DynamicResource QuickBrowser}" TextWrapping="Wrap" />
+            <Button Command="{Binding AnalyzeAreaCommand}" CommandParameter="Browser">
+              <ctl:IconLabel Icon="{StaticResource IconAnalyze}" Text="{DynamicResource BtnAnalyze}" />
+            </Button>
+          </StackPanel>
+        </Border>
+        <Border Classes="card" Margin="6,0">
+          <StackPanel Spacing="10">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <PathIcon Data="{StaticResource IconDeveloper}" Width="22" Height="22" Foreground="{DynamicResource BrushCatDeveloper}" />
+              <TextBlock Classes="h3" Text="{DynamicResource NavDeveloper}" />
+            </StackPanel>
+            <TextBlock Classes="muted small" Text="{DynamicResource QuickDeveloper}" TextWrapping="Wrap" />
+            <Button Command="{Binding AnalyzeAreaCommand}" CommandParameter="Developer">
+              <ctl:IconLabel Icon="{StaticResource IconAnalyze}" Text="{DynamicResource BtnAnalyze}" />
+            </Button>
+          </StackPanel>
+        </Border>
+      </UniformGrid>
+
+      <Grid ColumnDefinitions="*,18,*">
+        <!-- Drives -->
+        <Border Classes="card">
+          <StackPanel Spacing="12">
+            <TextBlock Classes="h2" Text="{DynamicResource HdrDrives}" />
+            <ItemsControl ItemsSource="{Binding Drives}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Spacing="6" Margin="0,0,0,12">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                      <PathIcon Data="{StaticResource IconHarddisk}" Width="18" Height="18" Foreground="{DynamicResource BrushCatSystem}" Margin="0,0,8,0" />
+                      <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="SemiBold" />
+                      <TextBlock Grid.Column="2" Classes="muted small" Classes.deep="{Binding IsLow}" Text="{Binding FreeText}" />
+                    </Grid>
+                    <ProgressBar Classes="usage" Value="{Binding UsedPercent}" Maximum="100" />
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+
+        <!-- History -->
+        <Border Grid.Column="2" Classes="card">
+          <StackPanel Spacing="12">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+              <PathIcon Data="{StaticResource IconHistory}" Width="20" Height="20" Foreground="{DynamicResource BrushAccentText}" Margin="0,0,8,0" />
+              <TextBlock Grid.Column="1" Classes="h2" Text="{DynamicResource HdrHistory}" />
+              <Button Grid.Column="2" Classes="icon" Command="{Binding OpenCommand}" CommandParameter="Reports" ToolTip.Tip="{DynamicResource NavReports}" IsVisible="{Binding IsExpert}">
+                <PathIcon Data="{StaticResource IconReport}" />
+              </Button>
+            </Grid>
+            <TextBlock Classes="muted" Text="{DynamicResource HistoryEmpty}" IsVisible="{Binding !HasHistory}" TextWrapping="Wrap" />
+            <ItemsControl ItemsSource="{Binding History}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,0,0,8">
+                    <StackPanel>
+                      <TextBlock Text="{Binding Area}" FontWeight="SemiBold" />
+                      <TextBlock Classes="muted small" Text="{Binding Time}" />
+                    </StackPanel>
+                    <TextBlock Grid.Column="1" Classes="muted small" Text="{Binding Files}" VerticalAlignment="Center" Margin="0,0,16,0" />
+                    <TextBlock Grid.Column="2" Text="{Binding Freed}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+      </Grid>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

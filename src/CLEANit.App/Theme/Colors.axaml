@@ -1,0 +1,171 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- CLEANit "Spectrum" design tokens (dark: cool carbon, light: alabaster). Contrast of text tokens ≥ 4.5:1 (WCAG AA), see docs/DESIGN.md -->
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Dark">
+      <Color x:Key="ColorBgApp">#121214</Color>
+      <Color x:Key="ColorBgSidebar">#1A1A1E</Color>
+      <Color x:Key="ColorSurfaceCard">#1A1A1E</Color>
+      <Color x:Key="ColorSurfaceRaised">#222228</Color>
+      <Color x:Key="ColorSurfaceHover">#2A2A31</Color>
+      <Color x:Key="ColorBorder">#33333B</Color>
+      <Color x:Key="ColorAccent">#D81B60</Color>
+      <Color x:Key="ColorAccentHover">#E91E63</Color>
+      <Color x:Key="ColorAccentPressed">#C2185B</Color>
+      <Color x:Key="ColorAccentText">#F06292</Color>
+      <Color x:Key="ColorAccentSoft">#3B1B29</Color>
+      <Color x:Key="ColorMenuHover">#4A1E31</Color>
+      <Color x:Key="ColorTextPrimary">#F4F4F5</Color>
+      <Color x:Key="ColorTextSecondary">#A1A1AA</Color>
+      <Color x:Key="ColorTextDisabled">#71717A</Color>
+      <Color x:Key="ColorSafe">#60C689</Color>
+      <Color x:Key="ColorSafeSoft">#24322D</Color>
+      <Color x:Key="ColorModerate">#F5B740</Color>
+      <Color x:Key="ColorModerateSoft">#393023</Color>
+      <Color x:Key="ColorDeep">#FF7A45</Color>
+      <Color x:Key="ColorDeepSoft">#3A2723</Color>
+      <Color x:Key="ColorInfo">#57ACDC</Color>
+      <Color x:Key="ColorInfoSoft">#232E39</Color>
+      <Color x:Key="ColorDanger">#B91C1C</Color>
+      <Color x:Key="ColorDangerHover">#DC2626</Color>
+      <Color x:Key="ColorDangerPressed">#991B1B</Color>
+      <Color x:Key="ColorShadow">#66000000</Color>
+      <SolidColorBrush x:Key="BrushBgApp" Color="#121214" />
+      <SolidColorBrush x:Key="BrushBgSidebar" Color="#1A1A1E" />
+      <SolidColorBrush x:Key="BrushSurfaceCard" Color="#1A1A1E" />
+      <SolidColorBrush x:Key="BrushSurfaceRaised" Color="#222228" />
+      <SolidColorBrush x:Key="BrushSurfaceHover" Color="#2A2A31" />
+      <SolidColorBrush x:Key="BrushBorder" Color="#33333B" />
+      <SolidColorBrush x:Key="BrushAccent" Color="#D81B60" />
+      <SolidColorBrush x:Key="BrushAccentHover" Color="#E91E63" />
+      <SolidColorBrush x:Key="BrushAccentPressed" Color="#C2185B" />
+      <SolidColorBrush x:Key="BrushAccentText" Color="#F06292" />
+      <SolidColorBrush x:Key="BrushAccentSoft" Color="#3B1B29" />
+      <SolidColorBrush x:Key="BrushMenuHover" Color="#4A1E31" />
+      <SolidColorBrush x:Key="BrushTextPrimary" Color="#F4F4F5" />
+      <SolidColorBrush x:Key="BrushTextSecondary" Color="#A1A1AA" />
+      <SolidColorBrush x:Key="BrushTextDisabled" Color="#71717A" />
+      <SolidColorBrush x:Key="BrushSafe" Color="#60C689" />
+      <SolidColorBrush x:Key="BrushSafeSoft" Color="#24322D" />
+      <SolidColorBrush x:Key="BrushModerate" Color="#F5B740" />
+      <SolidColorBrush x:Key="BrushModerateSoft" Color="#393023" />
+      <SolidColorBrush x:Key="BrushDeep" Color="#FF7A45" />
+      <SolidColorBrush x:Key="BrushDeepSoft" Color="#3A2723" />
+      <SolidColorBrush x:Key="BrushInfo" Color="#57ACDC" />
+      <SolidColorBrush x:Key="BrushInfoSoft" Color="#232E39" />
+      <SolidColorBrush x:Key="BrushDanger" Color="#B91C1C" />
+      <SolidColorBrush x:Key="BrushDangerHover" Color="#DC2626" />
+      <SolidColorBrush x:Key="BrushDangerPressed" Color="#991B1B" />
+      <SolidColorBrush x:Key="BrushShadow" Color="#66000000" />
+      <!-- DataGrid (Avalonia.Controls.DataGrid Fluent theme) in the CLEANit palette -->
+      <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundBrush" Color="Transparent" />
+      <SolidColorBrush x:Key="DataGridColumnHeaderForegroundBrush" Color="#F06292" />
+      <SolidColorBrush x:Key="DataGridColumnHeaderHoveredBackgroundBrush" Color="#2A2A31" />
+      <SolidColorBrush x:Key="DataGridColumnHeaderPressedBackgroundBrush" Color="#2A2A31" />
+      <SolidColorBrush x:Key="DataGridColumnHeaderDraggedBackgroundBrush" Color="#2A2A31" />
+      <SolidColorBrush x:Key="DataGridRowHoveredBackgroundColor" Color="#2A2A31" />
+      <SolidColorBrush x:Key="DataGridGridLinesBrush" Color="#33333B" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Light">
+      <Color x:Key="ColorBgApp">#FAFAFA</Color>
+      <Color x:Key="ColorBgSidebar">#FFFFFF</Color>
+      <Color x:Key="ColorSurfaceCard">#FFFFFF</Color>
+      <Color x:Key="ColorSurfaceRaised">#F3F3F6</Color>
+      <Color x:Key="ColorSurfaceHover">#E9E9EE</Color>
+      <Color x:Key="ColorBorder">#D9D9E0</Color>
+      <Color x:Key="ColorAccent">#C2185B</Color>
+      <Color x:Key="ColorAccentHover">#AD1457</Color>
+      <Color x:Key="ColorAccentPressed">#880E4F</Color>
+      <Color x:Key="ColorAccentText">#C2185B</Color>
+      <Color x:Key="ColorAccentSoft">#FCE4EC</Color>
+      <Color x:Key="ColorMenuHover">#F8BBD0</Color>
+      <Color x:Key="ColorTextPrimary">#18181B</Color>
+      <Color x:Key="ColorTextSecondary">#52525B</Color>
+      <Color x:Key="ColorTextDisabled">#71717A</Color>
+      <Color x:Key="ColorSafe">#1E7A4C</Color>
+      <Color x:Key="ColorSafeSoft">#E6F6EC</Color>
+      <Color x:Key="ColorModerate">#B45309</Color>
+      <Color x:Key="ColorModerateSoft">#FEF3C7</Color>
+      <Color x:Key="ColorDeep">#C2410C</Color>
+      <Color x:Key="ColorDeepSoft">#FFEDD5</Color>
+      <Color x:Key="ColorInfo">#1F5A94</Color>
+      <Color x:Key="ColorInfoSoft">#E3F1FA</Color>
+      <Color x:Key="ColorDanger">#B91C1C</Color>
+      <Color x:Key="ColorDangerHover">#DC2626</Color>
+      <Color x:Key="ColorDangerPressed">#991B1B</Color>
+      <Color x:Key="ColorShadow">#22000000</Color>
+      <SolidColorBrush x:Key="BrushBgApp" Color="#FAFAFA" />
+      <SolidColorBrush x:Key="BrushBgSidebar" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="BrushSurfaceCard" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="BrushSurfaceRaised" Color="#F3F3F6" />
+      <SolidColorBrush x:Key="BrushSurfaceHover" Color="#E9E9EE" />
+      <SolidColorBrush x:Key="BrushBorder" Color="#D9D9E0" />
+      <SolidColorBrush x:Key="BrushAccent" Color="#C2185B" />
+      <SolidColorBrush x:Key="BrushAccentHover" Color="#AD1457" />
+      <SolidColorBrush x:Key="BrushAccentPressed" Color="#880E4F" />
+      <SolidColorBrush x:Key="BrushAccentText" Color="#C2185B" />
+      <SolidColorBrush x:Key="BrushAccentSoft" Color="#FCE4EC" />
+      <SolidColorBrush x:Key="BrushMenuHover" Color="#F8BBD0" />
+      <SolidColorBrush x:Key="BrushTextPrimary" Color="#18181B" />
+      <SolidColorBrush x:Key="BrushTextSecondary" Color="#52525B" />
+      <SolidColorBrush x:Key="BrushTextDisabled" Color="#71717A" />
+      <SolidColorBrush x:Key="BrushSafe" Color="#1E7A4C" />
+      <SolidColorBrush x:Key="BrushSafeSoft" Color="#E6F6EC" />
+      <SolidColorBrush x:Key="BrushModerate" Color="#B45309" />
+      <SolidColorBrush x:Key="BrushModerateSoft" Color="#FEF3C7" />
+      <SolidColorBrush x:Key="BrushDeep" Color="#C2410C" />
+      <SolidColorBrush x:Key="BrushDeepSoft" Color="#FFEDD5" />
+      <SolidColorBrush x:Key="BrushInfo" Color="#1F5A94" />
+      <SolidColorBrush x:Key="BrushInfoSoft" Color="#E3F1FA" />
+      <SolidColorBrush x:Key="BrushDanger" Color="#B91C1C" />
+      <SolidColorBrush x:Key="BrushDangerHover" Color="#DC2626" />
+      <SolidColorBrush x:Key="BrushDangerPressed" Color="#991B1B" />
+      <SolidColorBrush x:Key="BrushShadow" Color="#22000000" />
+      <!-- DataGrid (Avalonia.Controls.DataGrid Fluent theme) in the CLEANit palette -->
+      <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundBrush" Color="Transparent" />
+      <SolidColorBrush x:Key="DataGridColumnHeaderForegroundBrush" Color="#C2185B" />
+      <SolidColorBrush x:Key="DataGridColumnHeaderHoveredBackgroundBrush" Color="#E9E9EE" />
+      <SolidColorBrush x:Key="DataGridColumnHeaderPressedBackgroundBrush" Color="#E9E9EE" />
+      <SolidColorBrush x:Key="DataGridColumnHeaderDraggedBackgroundBrush" Color="#E9E9EE" />
+      <SolidColorBrush x:Key="DataGridRowHoveredBackgroundColor" Color="#E9E9EE" />
+      <SolidColorBrush x:Key="DataGridGridLinesBrush" Color="#D9D9E0" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+
+  <!-- Category colors (palette #E91E63 · #9C27B0 · #5727B0 · #272AB0 · #276BB0 · #57ACDC · #57DCBE · #60C689), same in both themes -->
+  <SolidColorBrush x:Key="BrushCatSystem" Color="#276BB0" />
+  <SolidColorBrush x:Key="BrushCatBrowser" Color="#57ACDC" />
+  <SolidColorBrush x:Key="BrushCatDeveloper" Color="#5727B0" />
+  <SolidColorBrush x:Key="BrushCatMultimedia" Color="#9C27B0" />
+  <SolidColorBrush x:Key="BrushCatUtilities" Color="#57DCBE" />
+  <SolidColorBrush x:Key="BrushCatCommunity" Color="#272AB0" />
+  <SolidColorBrush x:Key="BrushCatPrograms" Color="#60C689" />
+
+  <!-- Cancel of a running operation: solid red (white text 6.5:1) -->
+  <SolidColorBrush x:Key="BrushCancel" Color="#B91C1C" />
+  <SolidColorBrush x:Key="BrushCancelHover" Color="#DC2626" />
+  <SolidColorBrush x:Key="BrushCancelPressed" Color="#991B1B" />
+
+
+  <!-- Brand gradient: progress bars, active navigation marker, logo -->
+  <LinearGradientBrush x:Key="BrushBrandGradient" StartPoint="0%,0%" EndPoint="100%,0%">
+    <GradientStop Offset="0" Color="#E91E63" />
+    <GradientStop Offset="0.25" Color="#9C27B0" />
+    <GradientStop Offset="0.5" Color="#272AB0" />
+    <GradientStop Offset="0.75" Color="#57ACDC" />
+    <GradientStop Offset="1" Color="#60C689" />
+  </LinearGradientBrush>
+  <LinearGradientBrush x:Key="BrushLogoGradient" StartPoint="0%,0%" EndPoint="100%,100%">
+    <GradientStop Offset="0" Color="#E91E63" />
+    <GradientStop Offset="0.55" Color="#9C27B0" />
+    <GradientStop Offset="1" Color="#5727B0" />
+  </LinearGradientBrush>
+  <LinearGradientBrush x:Key="BrushNavMarker" StartPoint="0%,0%" EndPoint="0%,100%">
+    <GradientStop Offset="0" Color="#E91E63" />
+    <GradientStop Offset="1" Color="#9C27B0" />
+  </LinearGradientBrush>
+
+  <FontFamily x:Key="MonoFont">Cascadia Mono, Consolas, Courier New</FontFamily>
+
+</ResourceDictionary>

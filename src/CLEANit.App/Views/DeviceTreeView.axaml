@@ -1,0 +1,174 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             x:Class="CLEANit.App.Views.DeviceTreeView">
+  <DockPanel>
+
+    <!-- One row: sort · direction · drive · path · clear · choose folder · (cancel) · scan -->
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto,Auto" Margin="0,0,0,10">
+      <ComboBox ItemsSource="{Binding SortOptions}" SelectedIndex="{Binding SortIndex}" Width="190" VerticalAlignment="Center"
+                ToolTip.Tip="{DynamicResource TipTreeSort}" />
+      <Button Grid.Column="1" Classes="icon" Margin="4,0,8,0" Command="{Binding ToggleSortDirectionCommand}" ToolTip.Tip="{DynamicResource TipSortDirection}">
+        <Panel>
+          <PathIcon Data="{StaticResource IconSortDesc}" IsVisible="{Binding SortDescending}" />
+          <PathIcon Data="{StaticResource IconSortAsc}" IsVisible="{Binding !SortDescending}" />
+        </Panel>
+      </Button>
+      <ComboBox Grid.Column="2" ItemsSource="{Binding Drives}" SelectedItem="{Binding SelectedDrive}" Width="190" VerticalAlignment="Center">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <PathIcon Data="{StaticResource IconHarddisk}" Width="15" Height="15" />
+              <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+            </StackPanel>
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+      <TextBox Grid.Column="3" Text="{Binding RootPath}" Margin="8,0" MinWidth="160" FontFamily="{DynamicResource MonoFont}">
+        <TextBox.InnerLeftContent>
+          <PathIcon Data="{StaticResource IconFolder}" Width="16" Height="16" Margin="10,0,0,0" Opacity="0.7" />
+        </TextBox.InnerLeftContent>
+      </TextBox>
+      <Button Grid.Column="4" Command="{Binding ClearFolderCommand}" Margin="0,0,8,0" ToolTip.Tip="{DynamicResource TipClearFolder}">
+        <ctl:IconLabel Icon="{StaticResource IconFolderRemove}" Text="{DynamicResource BtnClear}" />
+      </Button>
+      <Button Grid.Column="5" Command="{Binding BrowseCommand}" Margin="0,0,8,0">
+        <ctl:IconLabel Icon="{StaticResource IconFolderOpen}" Text="{DynamicResource BtnChooseFolder}" />
+      </Button>
+      <Button Grid.Column="6" Classes="fixed cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}" Margin="0,0,8,0">
+        <ctl:IconLabel Icon="{StaticResource IconCancel}" Text="{DynamicResource BtnCancel}" />
+      </Button>
+      <Button Grid.Column="7" Classes="primary" Command="{Binding ScanCommand}">
+        <ctl:IconLabel Icon="{StaticResource IconAnalyze}" Text="{DynamicResource BtnScan}" />
+      </Button>
+    </Grid>
+
+    <!-- Summary · read only / edit mode (always read only on start) -->
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto,Auto,Auto" Margin="0,0,0,10">
+      <Border Classes="pill accent" VerticalAlignment="Center" IsVisible="{Binding HasRows}">
+        <TextBlock Text="{Binding Summary}" />
+      </Border>
+      <!-- Highlighted in the accent colour; the switch itself turns pink when on -->
+      <PathIcon Grid.Column="2" Data="{StaticResource IconLock}" Width="15" Height="15" Foreground="{DynamicResource BrushAccentText}"
+                IsVisible="{Binding !EditMode}" VerticalAlignment="Center" />
+      <PathIcon Grid.Column="2" Data="{StaticResource IconLockOpen}" Width="15" Height="15" Foreground="{DynamicResource BrushAccentText}"
+                IsVisible="{Binding EditMode}" VerticalAlignment="Center" />
+      <TextBlock Grid.Column="3" Classes="accent" Text="{DynamicResource LblTreeEditMode}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="8,0" />
+      <ToggleSwitch Grid.Column="4" IsChecked="{Binding EditMode}" OnContent="" OffContent="" MinWidth="0" VerticalAlignment="Center"
+                    ToolTip.Tip="{DynamicResource TipTreeEditMode}" />
+    </Grid>
+
+    <StackPanel DockPanel.Dock="Top" Spacing="4" IsVisible="{Binding IsBusy}" Margin="0,0,0,8">
+      <ProgressBar IsIndeterminate="True" />
+      <TextBlock Classes="muted small" Text="{Binding Status}" TextTrimming="CharacterEllipsis" />
+    </StackPanel>
+
+    <!-- Selected item: actions -->
+    <!-- Edit mode: ticked entries -->
+    <Border DockPanel.Dock="Bottom" Classes="card" Padding="14,10" Margin="0,10,0,0" IsVisible="{Binding EditMode}">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel VerticalAlignment="Center" Spacing="2">
+          <TextBlock Text="{Binding CheckedText}" FontWeight="SemiBold" />
+          <TextBlock Classes="muted small" Text="{Binding ModeText}" />
+        </StackPanel>
+        <Button Grid.Column="1" Classes="danger fixed" Margin="12,0,0,0" Command="{Binding DeleteCheckedCommand}">
+          <ctl:IconLabel Icon="{StaticResource IconDelete}" Text="{DynamicResource BtnDeleteSelected}" />
+        </Button>
+      </Grid>
+    </Border>
+
+    <Border DockPanel.Dock="Bottom" Classes="card" Padding="14,10" Margin="0,10,0,0" IsVisible="{Binding HasSelection}">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Classes="mono small" Text="{Binding Selected.FullPath}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                   ToolTip.Tip="{Binding Selected.FullPath}" />
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" Margin="12,0,0,0">
+          <Button Classes="danger" Command="{Binding DeleteSelectedCommand}" IsVisible="{Binding EditMode}">
+            <ctl:IconLabel Icon="{StaticResource IconDelete}" Text="{DynamicResource BtnDelete}" />
+          </Button>
+          <Button Command="{Binding CopyPathCommand}">
+            <ctl:IconLabel Icon="{StaticResource IconCopy}" Text="{DynamicResource BtnCopyPath}" />
+          </Button>
+          <Button Command="{Binding OpenInDiskUsageCommand}" IsVisible="{Binding Selected.IsFolder}">
+            <ctl:IconLabel Icon="{StaticResource IconDisk}" Text="{DynamicResource NavDisk}" />
+          </Button>
+          <Button Classes="primary" Command="{Binding ShowInExplorerCommand}">
+            <ctl:IconLabel Icon="{StaticResource IconOpenInNew}" Text="{DynamicResource BtnExplorer}" />
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Border Classes="tablehead" DockPanel.Dock="Top">
+      <Grid ColumnDefinitions="*,1.2*,110,90,90,110">
+        <TextBlock Classes="section column" Text="{DynamicResource ColName}" />
+        <TextBlock Grid.Column="1" Classes="section column" Text="{DynamicResource ColShare}" />
+        <TextBlock Grid.Column="2" Classes="section column" Text="{DynamicResource ColSize}" HorizontalAlignment="Right" />
+        <TextBlock Grid.Column="3" Classes="section column" Text="{DynamicResource ColFiles}" HorizontalAlignment="Right" />
+        <TextBlock Grid.Column="4" Classes="section column" Text="{DynamicResource ColFolders}" HorizontalAlignment="Right" />
+        <TextBlock Grid.Column="5" Classes="section column" Text="{DynamicResource ColModified}" HorizontalAlignment="Right" />
+      </Grid>
+    </Border>
+    <Grid>
+      <TextBlock Classes="muted" Text="{DynamicResource TreeEmpty}" IsVisible="{Binding !HasRows}" HorizontalAlignment="Center" Margin="0,40" TextWrapping="Wrap" />
+      <!-- Virtualized: only visible rows become UI elements -->
+      <ListBox Classes="plain" ItemsSource="{Binding Rows}">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Border Classes="tablerow" Classes.active="{Binding IsActive}" CornerRadius="6" Padding="6,3" ctl:Motion.Enter="True">
+              <Border.ContextMenu>
+                <ContextMenu>
+                  <MenuItem Header="{DynamicResource BtnExplorer}" Command="{Binding $parent[UserControl].DataContext.ShowInExplorerCommand}" CommandParameter="{Binding}"
+                            IsEnabled="{Binding !IsMore}">
+                    <MenuItem.Icon><PathIcon Data="{StaticResource IconOpenInNew}" /></MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Header="{DynamicResource BtnCopyPath}" Command="{Binding $parent[UserControl].DataContext.CopyPathCommand}" CommandParameter="{Binding}"
+                            IsEnabled="{Binding !IsMore}">
+                    <MenuItem.Icon><PathIcon Data="{StaticResource IconCopy}" /></MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Header="{DynamicResource NavDisk}" Command="{Binding $parent[UserControl].DataContext.OpenInDiskUsageCommand}" CommandParameter="{Binding}"
+                            IsVisible="{Binding IsFolder}">
+                    <MenuItem.Icon><PathIcon Data="{StaticResource IconDisk}" /></MenuItem.Icon>
+                  </MenuItem>
+                  <MenuItem Header="{DynamicResource BtnDelete}" Command="{Binding $parent[UserControl].DataContext.DeleteRowCommand}" CommandParameter="{Binding}"
+                            IsVisible="{Binding $parent[UserControl].DataContext.EditMode}" IsEnabled="{Binding CanDelete}">
+                    <MenuItem.Icon><PathIcon Data="{StaticResource IconDelete}" Foreground="{DynamicResource BrushCancel}" /></MenuItem.Icon>
+                  </MenuItem>
+                </ContextMenu>
+              </Border.ContextMenu>
+              <Grid ColumnDefinitions="*,1.2*,110,90,90,110">
+                <StackPanel Orientation="Horizontal" Spacing="6" Margin="{Binding Indent}">
+                  <!-- Edit mode: tick for deletion -->
+                  <CheckBox IsChecked="{Binding IsChecked}" IsEnabled="{Binding CanDelete}" MinWidth="0" Padding="0" VerticalAlignment="Center"
+                            IsVisible="{Binding $parent[UserControl].DataContext.EditMode}" />
+                  <Button Classes="icon small" Width="22" Height="22" Padding="3" IsVisible="{Binding CanExpand}"
+                          Command="{Binding $parent[UserControl].DataContext.ToggleCommand}" CommandParameter="{Binding}">
+                    <PathIcon Classes="chevron" Classes.expanded="{Binding IsExpanded}" Data="{StaticResource IconChevronRight}" Width="13" Height="13" />
+                  </Button>
+                  <Panel Width="22" IsVisible="{Binding !CanExpand}" />
+                  <PathIcon Data="{StaticResource IconFolder}" Width="16" Height="16" Foreground="{DynamicResource BrushModerate}" IsVisible="{Binding IsFolder}" />
+                  <PathIcon Data="{StaticResource IconFile}" Width="16" Height="16" Foreground="{DynamicResource BrushTextSecondary}" IsVisible="{Binding IsFile}" />
+                  <PathIcon Data="{StaticResource IconDotsVertical}" Width="16" Height="16" Foreground="{DynamicResource BrushTextDisabled}" IsVisible="{Binding IsMore}" />
+                  <Button Classes="row" Padding="2,0" Command="{Binding $parent[UserControl].DataContext.SelectCommand}" CommandParameter="{Binding}">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <TextBlock Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Classes.muted="{Binding IsMore}" />
+                      <PathIcon Data="{StaticResource IconShieldLock}" Width="13" Height="13" Foreground="{DynamicResource BrushModerate}" IsVisible="{Binding Denied}"
+                                ToolTip.Tip="{DynamicResource TipTreeDenied}" />
+                    </StackPanel>
+                  </Button>
+                </StackPanel>
+                <Grid Grid.Column="1" ColumnDefinitions="*,60" VerticalAlignment="Center" Margin="10,0">
+                  <ProgressBar Classes="usage" Value="{Binding Percent}" Maximum="100" VerticalAlignment="Center" IsVisible="{Binding !IsMore}" />
+                  <TextBlock Grid.Column="1" Classes="muted small" Text="{Binding PercentText}" HorizontalAlignment="Right" />
+                </Grid>
+                <TextBlock Grid.Column="2" Text="{Binding Size}" FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="3" Classes="muted" Text="{Binding Files}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="4" Classes="muted" Text="{Binding Folders}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="5" Classes="muted" Text="{Binding Modified}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Grid>
+  </DockPanel>
+</UserControl>

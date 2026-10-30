@@ -1,0 +1,94 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="using:CLEANit.App.Controls"
+        x:Class="CLEANit.App.Views.CleanConfirmWindow"
+        Icon="/Assets/cleanit.ico"
+        Title="{Binding Title}"
+        Width="760" Height="640"
+        MinWidth="560" MinHeight="540"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+  <!-- Fixed rows: the list takes the remaining height and scrolls; the warning box has a maximum height and scrolls too,
+       so nothing overlaps in a small window -->
+  <Grid Margin="22" RowDefinitions="Auto,*,Auto,Auto,Auto">
+
+    <!-- Header: centred -->
+    <StackPanel Spacing="4" Margin="0,0,0,14" HorizontalAlignment="Center">
+      <PathIcon Data="{StaticResource IconBroom}" Width="28" Height="28" Foreground="{DynamicResource BrushAccentText}" HorizontalAlignment="Center" />
+      <TextBlock Classes="h2" Text="{Binding Title}" TextWrapping="Wrap" TextAlignment="Center" />
+      <TextBlock Classes="muted" Text="{Binding Summary}" TextWrapping="Wrap" TextAlignment="Center" />
+    </StackPanel>
+
+    <!-- What will be removed -->
+    <DockPanel Grid.Row="1" MinHeight="120">
+      <Border DockPanel.Dock="Top" Classes="tablehead">
+        <Grid ColumnDefinitions="*,110,100,90">
+          <TextBlock Classes="section column" Text="{DynamicResource ColRule}" />
+          <TextBlock Grid.Column="1" Classes="section column" Text="{DynamicResource ColRisk}" />
+          <TextBlock Grid.Column="2" Classes="section column" Text="{DynamicResource ColFiles}" HorizontalAlignment="Right" />
+          <TextBlock Grid.Column="3" Classes="section column" Text="{DynamicResource ColSize}" HorizontalAlignment="Right" />
+        </Grid>
+      </Border>
+      <ScrollViewer>
+        <ItemsControl ItemsSource="{Binding Rows}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Border Classes="tablerow">
+                <Grid ColumnDefinitions="*,110,100,90">
+                  <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Classes="muted small" Text="{Binding Category}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Classes="small warning" Text="{Binding Note}" IsVisible="{Binding HasNote}" TextWrapping="Wrap" />
+                  </StackPanel>
+                  <Border Grid.Column="1" Classes="badge" Classes.safe="{Binding IsSafe}" Classes.moderate="{Binding IsModerate}" Classes.deep="{Binding IsDeep}">
+                    <TextBlock Text="{Binding RiskText}" />
+                  </Border>
+                  <TextBlock Grid.Column="2" Text="{Binding Files}" HorizontalAlignment="Right" VerticalAlignment="Center" Classes="muted" />
+                  <TextBlock Grid.Column="3" Text="{Binding Size}" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold" />
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </DockPanel>
+
+    <!-- Deep warnings: at most 150 px, scrolls when longer -->
+    <Border Grid.Row="2" Classes="notice deep" IsVisible="{Binding HasWarnings}" Margin="0,12,0,0">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,6">
+          <PathIcon Data="{StaticResource IconAlert}" Width="18" Height="18" Foreground="{DynamicResource BrushDeep}" />
+          <TextBlock Classes="h3" Text="{DynamicResource ConfirmDeepTitle}" />
+        </StackPanel>
+        <ScrollViewer MaxHeight="110" VerticalScrollBarVisibility="Auto">
+          <ItemsControl ItemsSource="{Binding Warnings}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding StringFormat='• {0}'}" TextWrapping="Wrap" Margin="0,0,8,2" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </DockPanel>
+    </Border>
+
+    <!-- Button row: restore point switch left; grey Cancel left of the main action (accent, red with Deep items) -->
+    <Grid Grid.Row="4" ColumnDefinitions="*,Auto" Margin="0,14,0,0">
+      <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" IsVisible="{Binding ShowRestorePoint}">
+        <ToggleSwitch IsChecked="{Binding CreateRestorePoint}" OnContent="" OffContent="" MinWidth="0" VerticalAlignment="Center" />
+        <TextBlock Text="{DynamicResource ConfirmRestorePoint}" VerticalAlignment="Center" TextWrapping="Wrap" />
+      </StackPanel>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="16,0,0,0">
+        <Button Classes="fixed" Click="OnCancel" IsCancel="True">
+          <ctl:IconLabel Icon="{StaticResource IconClose}" Text="{DynamicResource BtnCancel}" />
+        </Button>
+        <Button Classes="primary fixed" Click="OnConfirm" IsVisible="{Binding IsNormal}">
+          <ctl:IconLabel Icon="{StaticResource IconBroom}" Text="{DynamicResource BtnCleanNow}" />
+        </Button>
+        <Button Classes="danger fixed" Click="OnConfirm" IsVisible="{Binding HasDeep}">
+          <ctl:IconLabel Icon="{StaticResource IconAlert}" Text="{DynamicResource BtnCleanNowDeep}" />
+        </Button>
+      </StackPanel>
+    </Grid>
+  </Grid>
+</Window>

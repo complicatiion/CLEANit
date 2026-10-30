@@ -1,0 +1,261 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="using:CLEANit.App.Controls"
+             xmlns:vm="using:CLEANit.App.ViewModels"
+             x:Class="CLEANit.App.Views.RulesPanel">
+  <DockPanel>
+
+    <!-- Toolbar row 1: analysis, selection, profiles -->
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*" Margin="0,0,0,10">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Classes="primary" Command="{Binding AnalyzeCommand}">
+          <ctl:IconLabel Icon="{StaticResource IconAnalyze}" Text="{DynamicResource BtnAnalyze}" />
+        </Button>
+        <Button Classes="icon" Command="{Binding SelectAllCommand}" ToolTip.Tip="{DynamicResource TipSelectAll}">
+          <PathIcon Data="{StaticResource IconSelectAll}" />
+        </Button>
+        <Button Classes="icon" Command="{Binding SelectNoneCommand}" ToolTip.Tip="{DynamicResource TipSelectNone}">
+          <PathIcon Data="{StaticResource IconSelectNone}" />
+        </Button>
+        <!-- One toggle: collapse all when something is open, otherwise expand all -->
+        <Button Classes="icon" Command="{Binding ToggleExpandAllCommand}" ToolTip.Tip="{DynamicResource TipExpandCollapse}">
+          <Panel>
+            <PathIcon Data="{StaticResource IconUnfoldMore}" IsVisible="{Binding !AnyExpanded}" />
+            <PathIcon Data="{StaticResource IconUnfoldLess}" IsVisible="{Binding AnyExpanded}" />
+          </Panel>
+        </Button>
+        <Border Classes="divider" Width="1" Height="24" Margin="4,0" />
+        <ComboBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}" MinWidth="200" VerticalAlignment="Center"
+                  ToolTip.Tip="{DynamicResource TipProfile}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <PathIcon Data="{StaticResource IconProfile}" Width="14" Height="14" />
+                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+              </StackPanel>
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Button Classes="icon" Command="{Binding ApplyProfileCommand}" ToolTip.Tip="{DynamicResource TipApplyProfile}">
+          <PathIcon Data="{StaticResource IconCheckAll}" />
+        </Button>
+        <Button Classes="icon" Command="{Binding SaveProfileCommand}" ToolTip.Tip="{DynamicResource TipSaveProfile}">
+          <PathIcon Data="{StaticResource IconSave}" />
+        </Button>
+        <Button Classes="icon delete" Command="{Binding DeleteProfileCommand}" IsVisible="{Binding CanDeleteProfile}"
+                ToolTip.Tip="{DynamicResource TipDeleteProfile}">
+          <PathIcon Data="{StaticResource IconDelete}" />
+        </Button>
+      </StackPanel>
+    </Grid>
+
+    <!-- Toolbar row 2: risk filters left, search right -->
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+      <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+        <!-- Symbol only (not a button): marks the chips as filters, like on the Windows settings page -->
+        <PathIcon Data="{StaticResource IconFilterVariant}" Width="16" Height="16" Margin="0,0,2,0" VerticalAlignment="Center"
+                  Foreground="{DynamicResource BrushTextSecondary}" ToolTip.Tip="{DynamicResource TipRiskFilter}" />
+        <ToggleButton Classes="chip" IsChecked="{Binding ShowSafe}" Content="{DynamicResource RiskSafe}" ToolTip.Tip="{DynamicResource TipRiskSafe}" />
+        <ToggleButton Classes="chip" IsChecked="{Binding ShowModerate}" Content="{DynamicResource RiskModerate}" ToolTip.Tip="{DynamicResource TipRiskModerate}" />
+        <ToggleButton Classes="chip" IsChecked="{Binding ShowDeep}" Content="{DynamicResource RiskDeep}" ToolTip.Tip="{DynamicResource TipRiskDeep}" />
+        <ToggleButton Classes="chip" IsChecked="{Binding ShowCommunity}" IsVisible="{Binding HasCommunity}" Content="{DynamicResource BadgeCommunity}"
+                      ToolTip.Tip="{DynamicResource TipCommunity}" />
+      </StackPanel>
+      <TextBox Grid.Column="1" Text="{Binding Search}" Watermark="{DynamicResource WatermarkSearchRules}" Width="240" Margin="12,0,0,0">
+        <TextBox.InnerLeftContent>
+          <PathIcon Data="{StaticResource IconMagnify}" Width="16" Height="16" Margin="10,0,0,0" Opacity="0.7" />
+        </TextBox.InnerLeftContent>
+      </TextBox>
+    </Grid>
+
+    <!-- Action bar: summary, progress, Cancel left of the main action -->
+    <Border DockPanel.Dock="Bottom" Classes="card" Padding="16,12" Margin="0,12,0,0">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel VerticalAlignment="Center" Spacing="4">
+          <TextBlock Text="{Binding SummaryText}" FontWeight="SemiBold" TextWrapping="Wrap" />
+          <TextBlock Classes="muted small" Text="{Binding LastResult}" IsVisible="{Binding LastResult, Converter={x:Static ObjectConverters.IsNotNull}}" TextWrapping="Wrap" />
+          <StackPanel Spacing="4" IsVisible="{Binding IsBusy}">
+            <ProgressBar Value="{Binding Progress}" IsIndeterminate="{Binding IsIndeterminate}" Maximum="100" />
+            <TextBlock Classes="muted small" Text="{Binding ProgressText}" TextTrimming="CharacterEllipsis" />
+          </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" Margin="16,0,0,0">
+          <Button Classes="fixed cancel" Command="{Binding CancelCommand}" IsVisible="{Binding IsBusy}">
+            <ctl:IconLabel Icon="{StaticResource IconCancel}" Text="{DynamicResource BtnCancel}" />
+          </Button>
+          <Button Classes="primary fixed" Command="{Binding CleanCommand}" ToolTip.Tip="{DynamicResource TipClean}">
+            <ctl:IconLabel Icon="{StaticResource IconBroom}" Text="{DynamicResource BtnClean}" />
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Grid x:Name="SplitGrid" ColumnDefinitions="*,14,390">
+
+      <!-- Rules grouped by category: one virtualized list (headers + rules of open categories) -->
+      <Border Classes="card" Padding="6">
+        <Grid>
+          <TextBlock Classes="muted" Text="{DynamicResource NoRules}" IsVisible="{Binding !HasRules}" HorizontalAlignment="Center" Margin="0,30" TextWrapping="Wrap" />
+          <ListBox Classes="plain" ItemsSource="{Binding Rows}">
+            <ListBox.DataTemplates>
+              <DataTemplate DataType="vm:RuleGroupViewModel">
+                <Button Classes="row" Margin="0,4,0,2"
+                        Command="{Binding $parent[UserControl].DataContext.ToggleGroupCommand}" CommandParameter="{Binding}">
+                  <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto">
+                    <Panel Width="18" Margin="0,0,8,0" VerticalAlignment="Center">
+                      <PathIcon Classes="chevron" Classes.expanded="{Binding IsExpanded}" Data="{StaticResource IconChevronRight}" Width="14" Height="14" />
+                    </Panel>
+                    <TextBlock Grid.Column="1" Classes="h3" Text="{Binding Name}" VerticalAlignment="Center" />
+                    <Border Grid.Column="2" Classes="badge info" IsVisible="{Binding IsCommunity}" Margin="10,0,0,0">
+                      <TextBlock Text="{DynamicResource BadgeCommunity}" />
+                    </Border>
+                    <TextBlock Grid.Column="4" Classes="muted small" Text="{Binding SummaryText}" VerticalAlignment="Center" />
+                  </Grid>
+                </Button>
+              </DataTemplate>
+              <DataTemplate DataType="vm:RuleItemViewModel">
+                <Border Classes="tablerow rulerow" Classes.active="{Binding IsActive}" Classes.exiting="{Binding IsExiting}" CornerRadius="6"
+                        Margin="18,0,0,0" ctl:Motion.Enter="True">
+                  <Grid ColumnDefinitions="Auto,*">
+                    <CheckBox IsChecked="{Binding IsChecked}" VerticalAlignment="Center" Margin="0,0,4,0" />
+                    <Button Grid.Column="1" Classes="row"
+                            Command="{Binding $parent[UserControl].DataContext.SelectRuleCommand}" CommandParameter="{Binding}">
+                      <Grid ColumnDefinitions="*,Auto,Auto,Auto,120">
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
+                          <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                          <TextBlock Classes="muted small" Text="{Binding Description}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <PathIcon Grid.Column="1" Data="{StaticResource IconAlert}" Width="15" Height="15" Margin="0,0,8,0"
+                                  Foreground="{DynamicResource BrushModerate}" IsVisible="{Binding IsRunning}" ToolTip.Tip="{Binding RunningText}" />
+                        <PathIcon Grid.Column="2" Data="{StaticResource IconExpert}" Width="15" Height="15" Margin="0,0,8,0"
+                                  Foreground="{DynamicResource BrushAccentText}" IsVisible="{Binding IsExpertRule}" ToolTip.Tip="{DynamicResource BadgeExpert}" />
+                        <Border Grid.Column="3" Classes="badge" Classes.safe="{Binding IsSafe}" Classes.moderate="{Binding IsModerate}"
+                                Classes.deep="{Binding IsDeep}">
+                          <TextBlock Text="{Binding RiskText}" />
+                        </Border>
+                        <StackPanel Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Right">
+                          <TextBlock Text="{Binding SizeText}" FontWeight="SemiBold" HorizontalAlignment="Right" />
+                          <TextBlock Classes="muted small" Text="{Binding FilesText}" HorizontalAlignment="Right" />
+                        </StackPanel>
+                      </Grid>
+                    </Button>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ListBox.DataTemplates>
+          </ListBox>
+        </Grid>
+      </Border>
+
+      <GridSplitter x:Name="Splitter" Grid.Column="1" Classes="panel" ResizeDirection="Columns" ToolTip.Tip="{DynamicResource TipResize}" />
+
+      <!-- Details of the selected rule (resizable, scrolls horizontally for long paths) -->
+      <Border Grid.Column="2" Classes="card">
+        <Grid>
+          <StackPanel IsVisible="{Binding !HasSelectedRule}" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10">
+            <PathIcon Data="{StaticResource IconFormatList}" Width="34" Height="34" Foreground="{DynamicResource BrushTextDisabled}" />
+            <TextBlock Classes="muted" Text="{DynamicResource DetailsHint}" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="280" />
+          </StackPanel>
+          <ScrollViewer IsVisible="{Binding HasSelectedRule}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="12" DataContext="{Binding SelectedRule}">
+              <TextBlock Classes="h2" Text="{Binding Name}" TextWrapping="Wrap" MaxWidth="{Binding $parent[ScrollViewer].Bounds.Width}" />
+              <WrapPanel MaxWidth="{Binding $parent[ScrollViewer].Bounds.Width}" HorizontalAlignment="Left">
+                <Border Classes="badge" Classes.safe="{Binding IsSafe}" Classes.moderate="{Binding IsModerate}" Classes.deep="{Binding IsDeep}" Margin="0,0,6,6">
+                  <TextBlock Text="{Binding RiskText}" />
+                </Border>
+                <Border Classes="badge" Margin="0,0,6,6">
+                  <TextBlock Text="{Binding AreaText}" />
+                </Border>
+                <Border Classes="badge" Margin="0,0,6,6">
+                  <TextBlock Text="{Binding Category}" />
+                </Border>
+                <Border Classes="badge info" IsVisible="{Binding IsCommunity}" Margin="0,0,6,6">
+                  <TextBlock Text="{DynamicResource BadgeCommunity}" />
+                </Border>
+                <Border Classes="badge info" IsVisible="{Binding IsCustom}" Margin="0,0,6,6">
+                  <TextBlock Text="{DynamicResource BadgeCustom}" />
+                </Border>
+                <Border Classes="badge accent" IsVisible="{Binding IsExpertRule}" Margin="0,0,6,6">
+                  <TextBlock Text="{DynamicResource BadgeExpert}" />
+                </Border>
+                <Border Classes="badge" IsVisible="{Binding UsesRecycleBin}" Margin="0,0,6,6">
+                  <TextBlock Text="{DynamicResource BadgeRecycleBin}" />
+                </Border>
+              </WrapPanel>
+              <TextBlock Text="{Binding Description}" TextWrapping="Wrap" MaxWidth="{Binding $parent[ScrollViewer].Bounds.Width}" HorizontalAlignment="Left" />
+
+              <Border Classes="notice deep" IsVisible="{Binding HasWarning}" MaxWidth="{Binding $parent[ScrollViewer].Bounds.Width}" HorizontalAlignment="Left">
+                <Grid ColumnDefinitions="Auto,*">
+                  <PathIcon Data="{StaticResource IconAlert}" Width="16" Height="16" Foreground="{DynamicResource BrushDeep}" VerticalAlignment="Top" Margin="0,0,8,0" />
+                  <TextBlock Grid.Column="1" Text="{Binding Warning}" TextWrapping="Wrap" />
+                </Grid>
+              </Border>
+              <Border Classes="notice moderate" IsVisible="{Binding IsRunning}" MaxWidth="{Binding $parent[ScrollViewer].Bounds.Width}" HorizontalAlignment="Left">
+                <TextBlock Text="{Binding RunningText}" TextWrapping="Wrap" />
+              </Border>
+
+              <Grid ColumnDefinitions="Auto,32,Auto" IsVisible="{Binding HasResult}" HorizontalAlignment="Left">
+                <StackPanel>
+                  <TextBlock Classes="section" Text="{DynamicResource ColSize}" />
+                  <TextBlock Classes="kpi" Text="{Binding SizeText}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                  <TextBlock Classes="section" Text="{DynamicResource ColFiles}" />
+                  <TextBlock Classes="kpi" Text="{Binding FilesText}" />
+                </StackPanel>
+              </Grid>
+
+              <!-- DISM: read-only pre-analysis of the component store -->
+              <StackPanel Spacing="8" IsVisible="{Binding IsDism}" HorizontalAlignment="Left">
+                <Button Command="{Binding $parent[UserControl].DataContext.AnalyzeComponentStoreCommand}" CommandParameter="{Binding}"
+                        IsEnabled="{Binding !IsDismBusy}" ToolTip.Tip="{DynamicResource TipDismAnalyze}" HorizontalAlignment="Left">
+                  <ctl:IconLabel Icon="{StaticResource IconAnalyze}" Text="{DynamicResource BtnDismAnalyze}" />
+                </Button>
+                <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsDismBusy}" Width="220" HorizontalAlignment="Left" />
+                <TextBlock Classes="muted small" Text="{Binding DismInfo}" IsVisible="{Binding HasDismInfo}" TextWrapping="Wrap"
+                           MaxWidth="{Binding $parent[ScrollViewer].Bounds.Width}" />
+              </StackPanel>
+
+              <TextBlock Classes="section" Text="{DynamicResource HdrFolders}" />
+              <ItemsControl ItemsSource="{Binding Roots}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,0,4">
+                      <Button Classes="icon small" ToolTip.Tip="{DynamicResource TipOpenFolder}"
+                              Command="{Binding $parent[UserControl].DataContext.OpenPathCommand}" CommandParameter="{Binding}">
+                        <PathIcon Data="{StaticResource IconFolderOpen}" />
+                      </Button>
+                      <TextBlock Classes="mono small" Text="{Binding}" TextWrapping="NoWrap" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <Border Classes="notice moderate" IsVisible="{Binding HasBlocked}" HorizontalAlignment="Left">
+                <StackPanel Spacing="4">
+                  <TextBlock FontWeight="SemiBold" Text="{DynamicResource HdrBlocked}" />
+                  <ItemsControl ItemsSource="{Binding Blocked}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Classes="mono small" Text="{Binding}" TextWrapping="NoWrap" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+              </Border>
+
+              <TextBlock Classes="section" Text="{DynamicResource HdrLargestFiles}" IsVisible="{Binding HasSamples}" />
+              <ItemsControl ItemsSource="{Binding Samples}" IsVisible="{Binding HasSamples}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Classes="mono small muted" Text="{Binding}" TextWrapping="NoWrap" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </ScrollViewer>
+        </Grid>
+      </Border>
+    </Grid>
+  </DockPanel>
+</UserControl>
