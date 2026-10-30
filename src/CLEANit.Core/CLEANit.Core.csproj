@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>CLEANit.Core</RootNamespace>
+    <AssemblyName>CLEANit.Core</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="CLEANit.Core.Tests" />
+  </ItemGroup>
+
+  <!-- Built-in rules ship inside the assembly (read-only for everyone) -->
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\rules\*.json" Link="Rules\Builtin\%(Filename)%(Extension)" LogicalName="CLEANit.Rules.%(Filename)%(Extension)" />
+  </ItemGroup>
+
+</Project>
