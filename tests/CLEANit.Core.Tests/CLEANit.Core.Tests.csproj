@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CLEANit.Core\CLEANit.Core.csproj" />
+    <ProjectReference Include="..\..\src\CLEANit.Platform.Windows\CLEANit.Platform.Windows.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\rules\winapp2\Winapp2.ini" Link="Winapp2.ini" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

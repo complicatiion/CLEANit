@@ -1,0 +1,1264 @@
+// CLEANit built-in rules · Browser · MIT · passwords, autofill and bookmarks are never touched
+{
+  "area": "Browser",
+  "rules": [
+    {
+      "id": "browser.chrome.cache",
+      "category": "Google Chrome",
+      "categoryDe": "Google Chrome",
+      "name": "Cache",
+      "nameDe": "Cache",
+      "description": "Web, code and GPU caches of all profiles, crash reports.",
+      "descriptionDe": "Web-, Code- und GPU-Caches aller Profile, Absturzberichte.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\*\\Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\*\\Code Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\*\\GPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\*\\DawnCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\*\\DawnGraphiteCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\*\\DawnWebGPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\ShaderCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\GrShaderCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\GraphiteDawnCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\Crashpad\\reports",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Google\\Chrome\\User Data"
+      ],
+      "processes": [
+        "chrome"
+      ]
+    },
+    {
+      "id": "browser.chrome.serviceworker",
+      "category": "Google Chrome",
+      "categoryDe": "Google Chrome",
+      "name": "Offline website data (service workers)",
+      "nameDe": "Offline-Websitedaten (Service Worker)",
+      "description": "Cached scripts and data websites keep for offline use.",
+      "descriptionDe": "Zwischengespeicherte Skripte und Daten, die Websites offline nutzen.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\*\\Service Worker\\CacheStorage",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\*\\Service Worker\\ScriptCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Google\\Chrome\\User Data"
+      ],
+      "processes": [
+        "chrome"
+      ]
+    },
+    {
+      "id": "browser.chrome.cookies",
+      "category": "Google Chrome",
+      "categoryDe": "Google Chrome",
+      "name": "Cookies",
+      "nameDe": "Cookies",
+      "description": "All cookies of all profiles. Saved passwords stay untouched.",
+      "descriptionDe": "Alle Cookies aller Profile. Gespeicherte Passwörter bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\*\\Network",
+          "pattern": "Cookies;Cookies-journal",
+          "recursive": false
+        },
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\*",
+          "pattern": "Cookies;Cookies-journal;Extension Cookies;Extension Cookies-journal",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Google\\Chrome\\User Data"
+      ],
+      "processes": [
+        "chrome"
+      ],
+      "warning": "You will be signed out of all websites.",
+      "warningDe": "Du wirst auf allen Websites abgemeldet."
+    },
+    {
+      "id": "browser.chrome.history",
+      "category": "Google Chrome",
+      "categoryDe": "Google Chrome",
+      "name": "Browsing history",
+      "nameDe": "Browserverlauf",
+      "description": "Visited pages, download list, top sites and address bar suggestions. Bookmarks stay untouched.",
+      "descriptionDe": "Besuchte Seiten, Downloadliste, Top-Sites und Adressleisten-Vorschläge. Lesezeichen bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\*",
+          "pattern": "History;History-journal;Visited Links;Top Sites;Top Sites-journal;Shortcuts;Shortcuts-journal;Network Action Predictor;Network Action Predictor-journal;History Provider Cache",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Google\\Chrome\\User Data"
+      ],
+      "processes": [
+        "chrome"
+      ],
+      "warning": "The history cannot be restored.",
+      "warningDe": "Der Verlauf kann nicht wiederhergestellt werden."
+    },
+    {
+      "id": "browser.chrome.session",
+      "category": "Google Chrome",
+      "categoryDe": "Google Chrome",
+      "name": "Last session (open tabs)",
+      "nameDe": "Letzte Sitzung (offene Tabs)",
+      "description": "Saved tabs and windows for restoring the last session.",
+      "descriptionDe": "Gespeicherte Tabs und Fenster zum Wiederherstellen der letzten Sitzung.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\*\\Sessions",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Google\\Chrome\\User Data\\*",
+          "pattern": "Current Session;Current Tabs;Last Session;Last Tabs",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Google\\Chrome\\User Data"
+      ],
+      "processes": [
+        "chrome"
+      ],
+      "warning": "Open tabs of the last session cannot be restored.",
+      "warningDe": "Offene Tabs der letzten Sitzung lassen sich nicht wiederherstellen."
+    },
+    {
+      "id": "browser.edge.cache",
+      "category": "Microsoft Edge",
+      "categoryDe": "Microsoft Edge",
+      "name": "Cache",
+      "nameDe": "Cache",
+      "description": "Web, code and GPU caches of all profiles, crash reports.",
+      "descriptionDe": "Web-, Code- und GPU-Caches aller Profile, Absturzberichte.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\*\\Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\*\\Code Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\*\\GPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\*\\DawnCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\*\\DawnGraphiteCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\*\\DawnWebGPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\ShaderCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\GrShaderCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\GraphiteDawnCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\Crashpad\\reports",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Microsoft\\Edge\\User Data"
+      ],
+      "processes": [
+        "msedge"
+      ]
+    },
+    {
+      "id": "browser.edge.serviceworker",
+      "category": "Microsoft Edge",
+      "categoryDe": "Microsoft Edge",
+      "name": "Offline website data (service workers)",
+      "nameDe": "Offline-Websitedaten (Service Worker)",
+      "description": "Cached scripts and data websites keep for offline use.",
+      "descriptionDe": "Zwischengespeicherte Skripte und Daten, die Websites offline nutzen.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\*\\Service Worker\\CacheStorage",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\*\\Service Worker\\ScriptCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Microsoft\\Edge\\User Data"
+      ],
+      "processes": [
+        "msedge"
+      ]
+    },
+    {
+      "id": "browser.edge.cookies",
+      "category": "Microsoft Edge",
+      "categoryDe": "Microsoft Edge",
+      "name": "Cookies",
+      "nameDe": "Cookies",
+      "description": "All cookies of all profiles. Saved passwords stay untouched.",
+      "descriptionDe": "Alle Cookies aller Profile. Gespeicherte Passwörter bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\*\\Network",
+          "pattern": "Cookies;Cookies-journal",
+          "recursive": false
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\*",
+          "pattern": "Cookies;Cookies-journal;Extension Cookies;Extension Cookies-journal",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Microsoft\\Edge\\User Data"
+      ],
+      "processes": [
+        "msedge"
+      ],
+      "warning": "You will be signed out of all websites.",
+      "warningDe": "Du wirst auf allen Websites abgemeldet."
+    },
+    {
+      "id": "browser.edge.history",
+      "category": "Microsoft Edge",
+      "categoryDe": "Microsoft Edge",
+      "name": "Browsing history",
+      "nameDe": "Browserverlauf",
+      "description": "Visited pages, download list, top sites and address bar suggestions. Bookmarks stay untouched.",
+      "descriptionDe": "Besuchte Seiten, Downloadliste, Top-Sites und Adressleisten-Vorschläge. Lesezeichen bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\*",
+          "pattern": "History;History-journal;Visited Links;Top Sites;Top Sites-journal;Shortcuts;Shortcuts-journal;Network Action Predictor;Network Action Predictor-journal;History Provider Cache",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Microsoft\\Edge\\User Data"
+      ],
+      "processes": [
+        "msedge"
+      ],
+      "warning": "The history cannot be restored.",
+      "warningDe": "Der Verlauf kann nicht wiederhergestellt werden."
+    },
+    {
+      "id": "browser.edge.session",
+      "category": "Microsoft Edge",
+      "categoryDe": "Microsoft Edge",
+      "name": "Last session (open tabs)",
+      "nameDe": "Letzte Sitzung (offene Tabs)",
+      "description": "Saved tabs and windows for restoring the last session.",
+      "descriptionDe": "Gespeicherte Tabs und Fenster zum Wiederherstellen der letzten Sitzung.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\*\\Sessions",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Edge\\User Data\\*",
+          "pattern": "Current Session;Current Tabs;Last Session;Last Tabs",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Microsoft\\Edge\\User Data"
+      ],
+      "processes": [
+        "msedge"
+      ],
+      "warning": "Open tabs of the last session cannot be restored.",
+      "warningDe": "Offene Tabs der letzten Sitzung lassen sich nicht wiederherstellen."
+    },
+    {
+      "id": "browser.brave.cache",
+      "category": "Brave",
+      "categoryDe": "Brave",
+      "name": "Cache",
+      "nameDe": "Cache",
+      "description": "Web, code and GPU caches of all profiles, crash reports.",
+      "descriptionDe": "Web-, Code- und GPU-Caches aller Profile, Absturzberichte.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Code Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\*\\GPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\*\\DawnCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\*\\DawnGraphiteCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\*\\DawnWebGPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\ShaderCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\GrShaderCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\GraphiteDawnCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\Crashpad\\reports",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data"
+      ],
+      "processes": [
+        "brave"
+      ]
+    },
+    {
+      "id": "browser.brave.serviceworker",
+      "category": "Brave",
+      "categoryDe": "Brave",
+      "name": "Offline website data (service workers)",
+      "nameDe": "Offline-Websitedaten (Service Worker)",
+      "description": "Cached scripts and data websites keep for offline use.",
+      "descriptionDe": "Zwischengespeicherte Skripte und Daten, die Websites offline nutzen.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Service Worker\\CacheStorage",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Service Worker\\ScriptCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data"
+      ],
+      "processes": [
+        "brave"
+      ]
+    },
+    {
+      "id": "browser.brave.cookies",
+      "category": "Brave",
+      "categoryDe": "Brave",
+      "name": "Cookies",
+      "nameDe": "Cookies",
+      "description": "All cookies of all profiles. Saved passwords stay untouched.",
+      "descriptionDe": "Alle Cookies aller Profile. Gespeicherte Passwörter bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Network",
+          "pattern": "Cookies;Cookies-journal",
+          "recursive": false
+        },
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\*",
+          "pattern": "Cookies;Cookies-journal;Extension Cookies;Extension Cookies-journal",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data"
+      ],
+      "processes": [
+        "brave"
+      ],
+      "warning": "You will be signed out of all websites.",
+      "warningDe": "Du wirst auf allen Websites abgemeldet."
+    },
+    {
+      "id": "browser.brave.history",
+      "category": "Brave",
+      "categoryDe": "Brave",
+      "name": "Browsing history",
+      "nameDe": "Browserverlauf",
+      "description": "Visited pages, download list, top sites and address bar suggestions. Bookmarks stay untouched.",
+      "descriptionDe": "Besuchte Seiten, Downloadliste, Top-Sites und Adressleisten-Vorschläge. Lesezeichen bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\*",
+          "pattern": "History;History-journal;Visited Links;Top Sites;Top Sites-journal;Shortcuts;Shortcuts-journal;Network Action Predictor;Network Action Predictor-journal;History Provider Cache",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data"
+      ],
+      "processes": [
+        "brave"
+      ],
+      "warning": "The history cannot be restored.",
+      "warningDe": "Der Verlauf kann nicht wiederhergestellt werden."
+    },
+    {
+      "id": "browser.brave.session",
+      "category": "Brave",
+      "categoryDe": "Brave",
+      "name": "Last session (open tabs)",
+      "nameDe": "Letzte Sitzung (offene Tabs)",
+      "description": "Saved tabs and windows for restoring the last session.",
+      "descriptionDe": "Gespeicherte Tabs und Fenster zum Wiederherstellen der letzten Sitzung.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\*\\Sessions",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data\\*",
+          "pattern": "Current Session;Current Tabs;Last Session;Last Tabs",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\BraveSoftware\\Brave-Browser\\User Data"
+      ],
+      "processes": [
+        "brave"
+      ],
+      "warning": "Open tabs of the last session cannot be restored.",
+      "warningDe": "Offene Tabs der letzten Sitzung lassen sich nicht wiederherstellen."
+    },
+    {
+      "id": "browser.vivaldi.cache",
+      "category": "Vivaldi",
+      "categoryDe": "Vivaldi",
+      "name": "Cache",
+      "nameDe": "Cache",
+      "description": "Web, code and GPU caches of all profiles, crash reports.",
+      "descriptionDe": "Web-, Code- und GPU-Caches aller Profile, Absturzberichte.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\*\\Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\*\\Code Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\*\\GPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\*\\DawnCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\*\\DawnGraphiteCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\*\\DawnWebGPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\ShaderCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\GrShaderCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\GraphiteDawnCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\Crashpad\\reports",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Vivaldi\\User Data"
+      ],
+      "processes": [
+        "vivaldi"
+      ]
+    },
+    {
+      "id": "browser.vivaldi.serviceworker",
+      "category": "Vivaldi",
+      "categoryDe": "Vivaldi",
+      "name": "Offline website data (service workers)",
+      "nameDe": "Offline-Websitedaten (Service Worker)",
+      "description": "Cached scripts and data websites keep for offline use.",
+      "descriptionDe": "Zwischengespeicherte Skripte und Daten, die Websites offline nutzen.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\*\\Service Worker\\CacheStorage",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\*\\Service Worker\\ScriptCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Vivaldi\\User Data"
+      ],
+      "processes": [
+        "vivaldi"
+      ]
+    },
+    {
+      "id": "browser.vivaldi.cookies",
+      "category": "Vivaldi",
+      "categoryDe": "Vivaldi",
+      "name": "Cookies",
+      "nameDe": "Cookies",
+      "description": "All cookies of all profiles. Saved passwords stay untouched.",
+      "descriptionDe": "Alle Cookies aller Profile. Gespeicherte Passwörter bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\*\\Network",
+          "pattern": "Cookies;Cookies-journal",
+          "recursive": false
+        },
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\*",
+          "pattern": "Cookies;Cookies-journal;Extension Cookies;Extension Cookies-journal",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Vivaldi\\User Data"
+      ],
+      "processes": [
+        "vivaldi"
+      ],
+      "warning": "You will be signed out of all websites.",
+      "warningDe": "Du wirst auf allen Websites abgemeldet."
+    },
+    {
+      "id": "browser.vivaldi.history",
+      "category": "Vivaldi",
+      "categoryDe": "Vivaldi",
+      "name": "Browsing history",
+      "nameDe": "Browserverlauf",
+      "description": "Visited pages, download list, top sites and address bar suggestions. Bookmarks stay untouched.",
+      "descriptionDe": "Besuchte Seiten, Downloadliste, Top-Sites und Adressleisten-Vorschläge. Lesezeichen bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\*",
+          "pattern": "History;History-journal;Visited Links;Top Sites;Top Sites-journal;Shortcuts;Shortcuts-journal;Network Action Predictor;Network Action Predictor-journal;History Provider Cache",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Vivaldi\\User Data"
+      ],
+      "processes": [
+        "vivaldi"
+      ],
+      "warning": "The history cannot be restored.",
+      "warningDe": "Der Verlauf kann nicht wiederhergestellt werden."
+    },
+    {
+      "id": "browser.vivaldi.session",
+      "category": "Vivaldi",
+      "categoryDe": "Vivaldi",
+      "name": "Last session (open tabs)",
+      "nameDe": "Letzte Sitzung (offene Tabs)",
+      "description": "Saved tabs and windows for restoring the last session.",
+      "descriptionDe": "Gespeicherte Tabs und Fenster zum Wiederherstellen der letzten Sitzung.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\*\\Sessions",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Vivaldi\\User Data\\*",
+          "pattern": "Current Session;Current Tabs;Last Session;Last Tabs",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Vivaldi\\User Data"
+      ],
+      "processes": [
+        "vivaldi"
+      ],
+      "warning": "Open tabs of the last session cannot be restored.",
+      "warningDe": "Offene Tabs der letzten Sitzung lassen sich nicht wiederherstellen."
+    },
+    {
+      "id": "browser.chromium.cache",
+      "category": "Chromium",
+      "categoryDe": "Chromium",
+      "name": "Cache",
+      "nameDe": "Cache",
+      "description": "Web, code and GPU caches of all profiles, crash reports.",
+      "descriptionDe": "Web-, Code- und GPU-Caches aller Profile, Absturzberichte.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\*\\Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\*\\Code Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\*\\GPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\*\\DawnCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\*\\DawnGraphiteCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\*\\DawnWebGPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\ShaderCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\GrShaderCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\GraphiteDawnCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\Crashpad\\reports",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Chromium\\User Data"
+      ],
+      "processes": [
+        "chrome",
+        "chromium"
+      ]
+    },
+    {
+      "id": "browser.chromium.serviceworker",
+      "category": "Chromium",
+      "categoryDe": "Chromium",
+      "name": "Offline website data (service workers)",
+      "nameDe": "Offline-Websitedaten (Service Worker)",
+      "description": "Cached scripts and data websites keep for offline use.",
+      "descriptionDe": "Zwischengespeicherte Skripte und Daten, die Websites offline nutzen.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\*\\Service Worker\\CacheStorage",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\*\\Service Worker\\ScriptCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Chromium\\User Data"
+      ],
+      "processes": [
+        "chrome",
+        "chromium"
+      ]
+    },
+    {
+      "id": "browser.chromium.cookies",
+      "category": "Chromium",
+      "categoryDe": "Chromium",
+      "name": "Cookies",
+      "nameDe": "Cookies",
+      "description": "All cookies of all profiles. Saved passwords stay untouched.",
+      "descriptionDe": "Alle Cookies aller Profile. Gespeicherte Passwörter bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\*\\Network",
+          "pattern": "Cookies;Cookies-journal",
+          "recursive": false
+        },
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\*",
+          "pattern": "Cookies;Cookies-journal;Extension Cookies;Extension Cookies-journal",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Chromium\\User Data"
+      ],
+      "processes": [
+        "chrome",
+        "chromium"
+      ],
+      "warning": "You will be signed out of all websites.",
+      "warningDe": "Du wirst auf allen Websites abgemeldet."
+    },
+    {
+      "id": "browser.chromium.history",
+      "category": "Chromium",
+      "categoryDe": "Chromium",
+      "name": "Browsing history",
+      "nameDe": "Browserverlauf",
+      "description": "Visited pages, download list, top sites and address bar suggestions. Bookmarks stay untouched.",
+      "descriptionDe": "Besuchte Seiten, Downloadliste, Top-Sites und Adressleisten-Vorschläge. Lesezeichen bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\*",
+          "pattern": "History;History-journal;Visited Links;Top Sites;Top Sites-journal;Shortcuts;Shortcuts-journal;Network Action Predictor;Network Action Predictor-journal;History Provider Cache",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Chromium\\User Data"
+      ],
+      "processes": [
+        "chrome",
+        "chromium"
+      ],
+      "warning": "The history cannot be restored.",
+      "warningDe": "Der Verlauf kann nicht wiederhergestellt werden."
+    },
+    {
+      "id": "browser.chromium.session",
+      "category": "Chromium",
+      "categoryDe": "Chromium",
+      "name": "Last session (open tabs)",
+      "nameDe": "Letzte Sitzung (offene Tabs)",
+      "description": "Saved tabs and windows for restoring the last session.",
+      "descriptionDe": "Gespeicherte Tabs und Fenster zum Wiederherstellen der letzten Sitzung.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\*\\Sessions",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Chromium\\User Data\\*",
+          "pattern": "Current Session;Current Tabs;Last Session;Last Tabs",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Chromium\\User Data"
+      ],
+      "processes": [
+        "chrome",
+        "chromium"
+      ],
+      "warning": "Open tabs of the last session cannot be restored.",
+      "warningDe": "Offene Tabs der letzten Sitzung lassen sich nicht wiederherstellen."
+    },
+    {
+      "id": "browser.opera.cache",
+      "category": "Opera",
+      "categoryDe": "Opera",
+      "name": "Cache",
+      "nameDe": "Cache",
+      "description": "Web, code and GPU caches.",
+      "descriptionDe": "Web-, Code- und GPU-Caches.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Opera Software\\Opera Stable\\Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Opera Software\\Opera Stable\\Code Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Opera Software\\Opera Stable\\GPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Opera Software\\Opera Stable\\ShaderCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%AppData%\\Opera Software\\Opera Stable"
+      ],
+      "processes": [
+        "opera"
+      ]
+    },
+    {
+      "id": "browser.opera.cookies",
+      "category": "Opera",
+      "categoryDe": "Opera",
+      "name": "Cookies",
+      "nameDe": "Cookies",
+      "description": "All cookies. Saved passwords stay untouched.",
+      "descriptionDe": "Alle Cookies. Gespeicherte Passwörter bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%AppData%\\Opera Software\\Opera Stable\\Network",
+          "pattern": "Cookies;Cookies-journal",
+          "recursive": false
+        },
+        {
+          "path": "%AppData%\\Opera Software\\Opera Stable",
+          "pattern": "Cookies;Cookies-journal",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%AppData%\\Opera Software\\Opera Stable"
+      ],
+      "processes": [
+        "opera"
+      ],
+      "warning": "You will be signed out of all websites.",
+      "warningDe": "Du wirst auf allen Websites abgemeldet."
+    },
+    {
+      "id": "browser.opera.history",
+      "category": "Opera",
+      "categoryDe": "Opera",
+      "name": "Browsing history",
+      "nameDe": "Browserverlauf",
+      "description": "Visited pages, download list and top sites. Bookmarks stay untouched.",
+      "descriptionDe": "Besuchte Seiten, Downloadliste und Top-Sites. Lesezeichen bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%AppData%\\Opera Software\\Opera Stable",
+          "pattern": "History;History-journal;Visited Links;Top Sites;Top Sites-journal;Shortcuts;Shortcuts-journal",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%AppData%\\Opera Software\\Opera Stable"
+      ],
+      "processes": [
+        "opera"
+      ],
+      "warning": "The history cannot be restored.",
+      "warningDe": "Der Verlauf kann nicht wiederhergestellt werden."
+    },
+    {
+      "id": "browser.operagx.cache",
+      "category": "Opera GX",
+      "categoryDe": "Opera GX",
+      "name": "Cache",
+      "nameDe": "Cache",
+      "description": "Web, code and GPU caches.",
+      "descriptionDe": "Web-, Code- und GPU-Caches.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Opera Software\\Opera GX Stable\\Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Opera Software\\Opera GX Stable\\Code Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Opera Software\\Opera GX Stable\\GPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Opera Software\\Opera GX Stable\\ShaderCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%AppData%\\Opera Software\\Opera GX Stable"
+      ],
+      "processes": [
+        "opera"
+      ]
+    },
+    {
+      "id": "browser.operagx.cookies",
+      "category": "Opera GX",
+      "categoryDe": "Opera GX",
+      "name": "Cookies",
+      "nameDe": "Cookies",
+      "description": "All cookies. Saved passwords stay untouched.",
+      "descriptionDe": "Alle Cookies. Gespeicherte Passwörter bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%AppData%\\Opera Software\\Opera GX Stable\\Network",
+          "pattern": "Cookies;Cookies-journal",
+          "recursive": false
+        },
+        {
+          "path": "%AppData%\\Opera Software\\Opera GX Stable",
+          "pattern": "Cookies;Cookies-journal",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%AppData%\\Opera Software\\Opera GX Stable"
+      ],
+      "processes": [
+        "opera"
+      ],
+      "warning": "You will be signed out of all websites.",
+      "warningDe": "Du wirst auf allen Websites abgemeldet."
+    },
+    {
+      "id": "browser.operagx.history",
+      "category": "Opera GX",
+      "categoryDe": "Opera GX",
+      "name": "Browsing history",
+      "nameDe": "Browserverlauf",
+      "description": "Visited pages, download list and top sites. Bookmarks stay untouched.",
+      "descriptionDe": "Besuchte Seiten, Downloadliste und Top-Sites. Lesezeichen bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%AppData%\\Opera Software\\Opera GX Stable",
+          "pattern": "History;History-journal;Visited Links;Top Sites;Top Sites-journal;Shortcuts;Shortcuts-journal",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%AppData%\\Opera Software\\Opera GX Stable"
+      ],
+      "processes": [
+        "opera"
+      ],
+      "warning": "The history cannot be restored.",
+      "warningDe": "Der Verlauf kann nicht wiederhergestellt werden."
+    },
+    {
+      "id": "browser.firefox.cache",
+      "category": "Mozilla Firefox",
+      "categoryDe": "Mozilla Firefox",
+      "name": "Cache",
+      "nameDe": "Cache",
+      "description": "Web cache, startup cache and thumbnails of all profiles, crash reports.",
+      "descriptionDe": "Web-Cache, Start-Cache und Miniaturen aller Profile, Absturzberichte.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Mozilla\\Firefox\\Profiles\\*\\cache2",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Mozilla\\Firefox\\Profiles\\*\\startupCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Mozilla\\Firefox\\Profiles\\*\\thumbnails",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Mozilla\\Firefox\\Profiles\\*\\jumpListCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Mozilla\\Firefox\\Profiles\\*\\shader-cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Mozilla\\Firefox\\Crash Reports\\pending",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Mozilla\\Firefox\\Crash Reports\\submitted",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%AppData%\\Mozilla\\Firefox\\Profiles"
+      ],
+      "processes": [
+        "firefox"
+      ]
+    },
+    {
+      "id": "browser.firefox.history",
+      "category": "Mozilla Firefox",
+      "categoryDe": "Mozilla Firefox",
+      "name": "Browsing history",
+      "nameDe": "Browserverlauf",
+      "description": "Visited pages and typed addresses of all profiles (SQLite). Bookmarks stay; places.sqlite is backed up first.",
+      "descriptionDe": "Besuchte Seiten und eingegebene Adressen aller Profile (SQLite). Lesezeichen bleiben; places.sqlite wird vorher gesichert.",
+      "risk": "Deep",
+      "selected": false,
+      "detect": [
+        "%AppData%\\Mozilla\\Firefox\\Profiles"
+      ],
+      "processes": [
+        "firefox"
+      ],
+      "action": "FirefoxHistory",
+      "warning": "The history cannot be restored from within Firefox (a backup of places.sqlite is kept).",
+      "warningDe": "Der Verlauf lässt sich in Firefox nicht wiederherstellen (eine Sicherung von places.sqlite bleibt erhalten)."
+    },
+    {
+      "id": "browser.firefox.cookies",
+      "category": "Mozilla Firefox",
+      "categoryDe": "Mozilla Firefox",
+      "name": "Cookies",
+      "nameDe": "Cookies",
+      "description": "All cookies of all profiles. Saved passwords and bookmarks stay untouched.",
+      "descriptionDe": "Alle Cookies aller Profile. Gespeicherte Passwörter und Lesezeichen bleiben unberührt.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%AppData%\\Mozilla\\Firefox\\Profiles\\*",
+          "pattern": "cookies.sqlite;cookies.sqlite-wal;cookies.sqlite-shm",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%AppData%\\Mozilla\\Firefox\\Profiles"
+      ],
+      "processes": [
+        "firefox"
+      ],
+      "warning": "You will be signed out of all websites.",
+      "warningDe": "Du wirst auf allen Websites abgemeldet."
+    },
+    {
+      "id": "browser.firefox.session",
+      "category": "Mozilla Firefox",
+      "categoryDe": "Mozilla Firefox",
+      "name": "Last session (open tabs)",
+      "nameDe": "Letzte Sitzung (offene Tabs)",
+      "description": "Saved tabs and windows for restoring the last session.",
+      "descriptionDe": "Gespeicherte Tabs und Fenster zum Wiederherstellen der letzten Sitzung.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%AppData%\\Mozilla\\Firefox\\Profiles\\*",
+          "pattern": "sessionstore.jsonlz4",
+          "recursive": false
+        },
+        {
+          "path": "%AppData%\\Mozilla\\Firefox\\Profiles\\*\\sessionstore-backups",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%AppData%\\Mozilla\\Firefox\\Profiles"
+      ],
+      "processes": [
+        "firefox"
+      ],
+      "warning": "Open tabs of the last session cannot be restored.",
+      "warningDe": "Offene Tabs der letzten Sitzung lassen sich nicht wiederherstellen."
+    }
+  ]
+}

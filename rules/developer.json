@@ -1,0 +1,521 @@
+// CLEANit built-in rules · Developer · MIT · project build output is handled by the workspace scanner
+{
+  "area": "Developer",
+  "rules": [
+    {
+      "id": "dev.vs.componentcache",
+      "category": "IDEs & editors",
+      "categoryDe": "IDEs & Editoren",
+      "name": "Visual Studio component cache",
+      "nameDe": "Visual-Studio-Komponentencache",
+      "description": "MEF component cache; rebuilt at the next start (fixes many extension issues).",
+      "descriptionDe": "MEF-Komponentencache; wird beim nächsten Start neu erstellt (behebt viele Erweiterungsprobleme).",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Microsoft\\VisualStudio\\*\\ComponentModelCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Microsoft\\VisualStudio"
+      ],
+      "processes": [
+        "devenv"
+      ]
+    },
+    {
+      "id": "dev.vs.symbols",
+      "category": "IDEs & editors",
+      "categoryDe": "IDEs & Editoren",
+      "name": "Visual Studio symbol cache",
+      "nameDe": "Visual-Studio-Symbolcache",
+      "description": "Downloaded debug symbols; downloaded again when needed.",
+      "descriptionDe": "Heruntergeladene Debug-Symbole; werden bei Bedarf neu geladen.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%Temp%\\SymbolCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%Temp%\\SymbolCache"
+      ],
+      "processes": [
+        "devenv"
+      ]
+    },
+    {
+      "id": "dev.vscode",
+      "category": "IDEs & editors",
+      "categoryDe": "IDEs & Editoren",
+      "name": "VS Code cache and logs",
+      "nameDe": "VS-Code-Cache und -Protokolle",
+      "description": "Caches, cached extension packages, logs and crash reports of Visual Studio Code.",
+      "descriptionDe": "Caches, zwischengespeicherte Erweiterungspakete, Protokolle und Absturzberichte von Visual Studio Code.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%AppData%\\Code\\Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Code\\CachedData",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Code\\CachedExtensionVSIXs",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Code\\Code Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Code\\GPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Code\\logs",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Code\\Crashpad",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%AppData%\\Code"
+      ],
+      "processes": [
+        "Code"
+      ]
+    },
+    {
+      "id": "dev.jetbrains",
+      "category": "IDEs & editors",
+      "categoryDe": "IDEs & Editoren",
+      "name": "JetBrains IDE caches and logs",
+      "nameDe": "JetBrains-IDE-Caches und -Protokolle",
+      "description": "Caches and logs of IntelliJ IDEA, Rider, PyCharm, WebStorm and others; indexes are rebuilt at the next start.",
+      "descriptionDe": "Caches und Protokolle von IntelliJ IDEA, Rider, PyCharm, WebStorm u. a.; Indizes werden beim nächsten Start neu erstellt.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\JetBrains\\*\\caches",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\JetBrains\\*\\log",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\JetBrains"
+      ],
+      "processes": [
+        "idea64",
+        "rider64",
+        "pycharm64",
+        "webstorm64",
+        "clion64",
+        "goland64",
+        "phpstorm64",
+        "datagrip64"
+      ]
+    },
+    {
+      "id": "dev.androidstudio",
+      "category": "IDEs & editors",
+      "categoryDe": "IDEs & Editoren",
+      "name": "Android Studio caches and logs",
+      "nameDe": "Android-Studio-Caches und -Protokolle",
+      "description": "IDE caches and logs of Android Studio; rebuilt at the next start.",
+      "descriptionDe": "IDE-Caches und Protokolle von Android Studio; werden beim nächsten Start neu erstellt.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Google\\AndroidStudio*\\caches",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Google\\AndroidStudio*\\log",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Google"
+      ],
+      "processes": [
+        "studio64"
+      ]
+    },
+    {
+      "id": "dev.nuget.http",
+      "category": "SDKs & package caches",
+      "categoryDe": "SDKs & Paket-Caches",
+      "name": "NuGet HTTP cache",
+      "nameDe": "NuGet-HTTP-Cache",
+      "description": "Cached package feed responses and scratch files.",
+      "descriptionDe": "Zwischengespeicherte Feed-Antworten und Arbeitsdateien.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\NuGet\\v3-cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\NuGet\\plugins-cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%Temp%\\NuGetScratch",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\NuGet"
+      ]
+    },
+    {
+      "id": "dev.nuget.packages",
+      "category": "SDKs & package caches",
+      "categoryDe": "SDKs & Paket-Caches",
+      "name": "NuGet global packages",
+      "nameDe": "Globale NuGet-Pakete",
+      "description": "All restored NuGet packages; projects restore what they need at the next build.",
+      "descriptionDe": "Alle wiederhergestellten NuGet-Pakete; Projekte laden beim nächsten Build, was sie brauchen.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%UserProfile%\\.nuget\\packages",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%UserProfile%\\.nuget\\packages"
+      ],
+      "processes": [
+        "devenv",
+        "rider64",
+        "MSBuild"
+      ]
+    },
+    {
+      "id": "dev.gradle",
+      "category": "SDKs & package caches",
+      "categoryDe": "SDKs & Paket-Caches",
+      "name": "Gradle caches",
+      "nameDe": "Gradle-Caches",
+      "description": "Downloaded dependencies and build caches; downloaded again at the next build. Daemon logs older than 7 days.",
+      "descriptionDe": "Heruntergeladene Abhängigkeiten und Build-Caches; werden beim nächsten Build neu geladen. Daemon-Protokolle älter als 7 Tage.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%UserProfile%\\.gradle\\caches",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%UserProfile%\\.gradle\\daemon",
+          "pattern": "*.log",
+          "recursive": true,
+          "minAgeHours": 168
+        }
+      ],
+      "detect": [
+        "%UserProfile%\\.gradle"
+      ],
+      "processes": [
+        "studio64",
+        "idea64"
+      ]
+    },
+    {
+      "id": "dev.android.sdktemp",
+      "category": "SDKs & package caches",
+      "categoryDe": "SDKs & Paket-Caches",
+      "name": "Android SDK temporary files",
+      "nameDe": "Temporäre Dateien des Android SDK",
+      "description": "Leftover downloads of the SDK manager.",
+      "descriptionDe": "Übrig gebliebene Downloads des SDK-Managers.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Android\\Sdk\\.temp",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Android\\Sdk\\.downloadIntermediates",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Android\\Sdk"
+      ]
+    },
+    {
+      "id": "dev.android.avd",
+      "category": "SDKs & package caches",
+      "categoryDe": "SDKs & Paket-Caches",
+      "name": "Android emulator snapshots",
+      "nameDe": "Android-Emulator-Snapshots",
+      "description": "Quick-boot snapshots of all virtual devices; the next start is a cold boot.",
+      "descriptionDe": "Schnellstart-Snapshots aller virtuellen Geräte; der nächste Start ist ein Kaltstart.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%UserProfile%\\.android\\avd\\*.avd\\snapshots",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%UserProfile%\\.android\\avd"
+      ],
+      "processes": [
+        "qemu-system-x86_64",
+        "emulator"
+      ]
+    },
+    {
+      "id": "dev.npm",
+      "category": "SDKs & package caches",
+      "categoryDe": "SDKs & Paket-Caches",
+      "name": "npm cache",
+      "nameDe": "npm-Cache",
+      "description": "Package cache of npm; downloaded again when needed.",
+      "descriptionDe": "Paket-Cache von npm; wird bei Bedarf neu geladen.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\npm-cache\\_cacache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\npm-cache\\_logs",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\npm-cache"
+      ]
+    },
+    {
+      "id": "dev.yarn",
+      "category": "SDKs & package caches",
+      "categoryDe": "SDKs & Paket-Caches",
+      "name": "Yarn cache",
+      "nameDe": "Yarn-Cache",
+      "description": "Package cache of Yarn.",
+      "descriptionDe": "Paket-Cache von Yarn.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Yarn\\Cache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Yarn\\Cache"
+      ]
+    },
+    {
+      "id": "dev.pip",
+      "category": "SDKs & package caches",
+      "categoryDe": "SDKs & Paket-Caches",
+      "name": "pip cache",
+      "nameDe": "pip-Cache",
+      "description": "Wheel and HTTP cache of pip.",
+      "descriptionDe": "Wheel- und HTTP-Cache von pip.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\pip\\cache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\pip\\cache"
+      ]
+    },
+    {
+      "id": "dev.go",
+      "category": "SDKs & package caches",
+      "categoryDe": "SDKs & Paket-Caches",
+      "name": "Go build cache",
+      "nameDe": "Go-Build-Cache",
+      "description": "Compiler cache of Go; rebuilt automatically.",
+      "descriptionDe": "Compiler-Cache von Go; wird automatisch neu erstellt.",
+      "risk": "Safe",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\go-build",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\go-build"
+      ]
+    },
+    {
+      "id": "dev.cargo",
+      "category": "SDKs & package caches",
+      "categoryDe": "SDKs & Paket-Caches",
+      "name": "Cargo registry cache",
+      "nameDe": "Cargo-Registry-Cache",
+      "description": "Downloaded crate archives of Rust/Cargo.",
+      "descriptionDe": "Heruntergeladene Crate-Archive von Rust/Cargo.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%UserProfile%\\.cargo\\registry\\cache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%UserProfile%\\.cargo\\registry"
+      ]
+    },
+    {
+      "id": "dev.dotnet.telemetry",
+      "category": "SDKs & package caches",
+      "categoryDe": "SDKs & Paket-Caches",
+      "name": ".NET CLI telemetry cache",
+      "nameDe": ".NET-CLI-Telemetrie-Cache",
+      "description": "Pending telemetry files of the dotnet CLI.",
+      "descriptionDe": "Wartende Telemetrie-Dateien der dotnet-CLI.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%UserProfile%\\.dotnet\\TelemetryStorageService",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%UserProfile%\\.dotnet\\TelemetryStorageService"
+      ]
+    },
+    {
+      "id": "dev.unity.cache",
+      "category": "Unity",
+      "categoryDe": "Unity",
+      "name": "Unity package cache",
+      "nameDe": "Unity-Paket-Cache",
+      "description": "Downloaded Unity packages; downloaded again when a project needs them.",
+      "descriptionDe": "Heruntergeladene Unity-Pakete; werden neu geladen, wenn ein Projekt sie braucht.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Unity\\cache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Unity\\cache"
+      ],
+      "processes": [
+        "Unity",
+        "Unity Hub"
+      ]
+    },
+    {
+      "id": "dev.unity.gicache",
+      "category": "Unity",
+      "categoryDe": "Unity",
+      "name": "Unity GI cache",
+      "nameDe": "Unity-GI-Cache",
+      "description": "Global illumination cache; lighting is recalculated when needed.",
+      "descriptionDe": "Global-Illumination-Cache; Beleuchtung wird bei Bedarf neu berechnet.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalLowAppData%\\Unity\\Caches\\GiCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalLowAppData%\\Unity\\Caches"
+      ],
+      "processes": [
+        "Unity"
+      ]
+    },
+    {
+      "id": "dev.unity.logs",
+      "category": "Unity",
+      "categoryDe": "Unity",
+      "name": "Unity Editor logs and crashes",
+      "nameDe": "Unity-Editor-Protokolle und -Abstürze",
+      "description": "Previous editor logs and crash reports.",
+      "descriptionDe": "Frühere Editor-Protokolle und Absturzberichte.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Unity\\Editor",
+          "pattern": "*-prev.log",
+          "recursive": false
+        },
+        {
+          "path": "%LocalAppData%\\Temp\\Unity\\Editor\\Crashes",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Unity\\Editor"
+      ],
+      "processes": [
+        "Unity"
+      ]
+    }
+  ]
+}

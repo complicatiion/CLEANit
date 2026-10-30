@@ -1,0 +1,794 @@
+// CLEANit built-in rules · System · MIT · see docs/RULES.md
+{
+  "area": "System",
+  "rules": [
+    {
+      "id": "sys.temp.user",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Temporary files (user)",
+      "nameDe": "Temporäre Dateien (Benutzer)",
+      "description": "Files in the user's temp folder that were not changed for 24 hours.",
+      "descriptionDe": "Dateien im Temp-Ordner des Benutzers, die seit 24 Stunden nicht geändert wurden.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%Temp%",
+          "pattern": "*",
+          "recursive": true,
+          "minAgeHours": 24
+        }
+      ]
+    },
+    {
+      "id": "sys.temp.windows",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Temporary files (Windows)",
+      "nameDe": "Temporäre Dateien (Windows)",
+      "description": "Windows temp folders, files older than 24 hours.",
+      "descriptionDe": "Temp-Ordner von Windows, Dateien älter als 24 Stunden.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%WinDir%\\Temp",
+          "pattern": "*",
+          "recursive": true,
+          "minAgeHours": 24
+        },
+        {
+          "path": "%WinDir%\\SystemTemp",
+          "pattern": "*",
+          "recursive": true,
+          "minAgeHours": 24
+        },
+        {
+          "path": "%WinDir%\\ServiceProfiles\\LocalService\\AppData\\Local\\Temp",
+          "pattern": "*",
+          "recursive": true,
+          "minAgeHours": 24
+        },
+        {
+          "path": "%WinDir%\\ServiceProfiles\\NetworkService\\AppData\\Local\\Temp",
+          "pattern": "*",
+          "recursive": true,
+          "minAgeHours": 24
+        }
+      ]
+    },
+    {
+      "id": "sys.thumbcache",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Thumbnail and icon cache",
+      "nameDe": "Miniatur- und Symbol-Cache",
+      "description": "Explorer thumbnail databases; rebuilt automatically. Files in use by Explorer are skipped.",
+      "descriptionDe": "Miniaturansicht-Datenbanken des Explorers; werden automatisch neu erstellt. Vom Explorer genutzte Dateien werden übersprungen.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Microsoft\\Windows\\Explorer",
+          "pattern": "thumbcache_*.db;iconcache_*.db",
+          "recursive": false
+        }
+      ]
+    },
+    {
+      "id": "sys.wer",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Windows error reports",
+      "nameDe": "Windows-Fehlerberichte",
+      "description": "Queued and archived error reports (WER).",
+      "descriptionDe": "Wartende und archivierte Fehlerberichte (WER).",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%ProgramData%\\Microsoft\\Windows\\WER\\ReportArchive",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%ProgramData%\\Microsoft\\Windows\\WER\\ReportQueue",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%ProgramData%\\Microsoft\\Windows\\WER\\Temp",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Windows\\WER\\ReportArchive",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Windows\\WER\\ReportQueue",
+          "pattern": "*",
+          "recursive": true
+        }
+      ]
+    },
+    {
+      "id": "sys.crashdumps",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Application crash dumps",
+      "nameDe": "Absturzabbilder von Anwendungen",
+      "description": "Dump files written when programs crash.",
+      "descriptionDe": "Speicherabbilder, die beim Absturz von Programmen entstehen.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\CrashDumps",
+          "pattern": "*.dmp",
+          "recursive": true
+        }
+      ]
+    },
+    {
+      "id": "sys.memorydumps",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "System memory dumps",
+      "nameDe": "System-Speicherabbilder",
+      "description": "MEMORY.DMP, minidumps and live kernel reports. Keep them if you are analysing a blue screen.",
+      "descriptionDe": "MEMORY.DMP, Minidumps und Live-Kernel-Berichte. Behalten, wenn ein Bluescreen analysiert werden soll.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%WinDir%",
+          "pattern": "MEMORY.DMP",
+          "recursive": false
+        },
+        {
+          "path": "%WinDir%\\Minidump",
+          "pattern": "*.dmp",
+          "recursive": true
+        },
+        {
+          "path": "%WinDir%\\LiveKernelReports",
+          "pattern": "*.dmp",
+          "recursive": true
+        }
+      ]
+    },
+    {
+      "id": "sys.logs",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Windows log files",
+      "nameDe": "Windows-Protokolldateien",
+      "description": "Setup, CBS, DISM and update logs older than 7 days. Active logs are skipped.",
+      "descriptionDe": "Setup-, CBS-, DISM- und Update-Protokolle älter als 7 Tage. Aktive Protokolle werden übersprungen.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%WinDir%\\Logs",
+          "pattern": "*.log;*.etl;*.cab;*.old",
+          "recursive": true,
+          "minAgeHours": 168
+        },
+        {
+          "path": "%WinDir%\\Panther",
+          "pattern": "*.log;*.etl",
+          "recursive": true,
+          "minAgeHours": 168
+        },
+        {
+          "path": "%WinDir%\\Debug",
+          "pattern": "*.log",
+          "recursive": true,
+          "minAgeHours": 168
+        },
+        {
+          "path": "%WinDir%\\SoftwareDistribution\\DataStore\\Logs",
+          "pattern": "*.log;*.jrs",
+          "recursive": true,
+          "minAgeHours": 168
+        }
+      ]
+    },
+    {
+      "id": "sys.deliveryoptimization",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Delivery Optimization cache",
+      "nameDe": "Übermittlungsoptimierung-Cache",
+      "description": "Update files Windows shares with other PCs. The service is stopped briefly and restored.",
+      "descriptionDe": "Update-Dateien, die Windows mit anderen PCs teilt. Der Dienst wird kurz gestoppt und wiederhergestellt.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%WinDir%\\ServiceProfiles\\NetworkService\\AppData\\Local\\Microsoft\\Windows\\DeliveryOptimization\\Cache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "services": [
+        "DoSvc"
+      ]
+    },
+    {
+      "id": "sys.update.download",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Windows Update download cache",
+      "nameDe": "Windows-Update-Downloadcache",
+      "description": "Downloaded update packages. Updates that are not installed yet are downloaded again. Services are stopped briefly and restored.",
+      "descriptionDe": "Heruntergeladene Update-Pakete. Noch nicht installierte Updates werden erneut geladen. Dienste werden kurz gestoppt und wiederhergestellt.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%WinDir%\\SoftwareDistribution\\Download",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "services": [
+        "wuauserv",
+        "bits"
+      ]
+    },
+    {
+      "id": "sys.inetcache",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Internet cache (Windows)",
+      "nameDe": "Internet-Cache (Windows)",
+      "description": "WinINet cache used by Windows components and older apps.",
+      "descriptionDe": "WinINet-Cache von Windows-Komponenten und älteren Apps.",
+      "risk": "Safe",
+      "selected": true,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Microsoft\\Windows\\INetCache\\IE",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Microsoft\\Windows\\INetCache\\Low",
+          "pattern": "*",
+          "recursive": true
+        }
+      ]
+    },
+    {
+      "id": "sys.chkdsk",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Check Disk fragments",
+      "nameDe": "Datenträgerprüfung-Fragmente",
+      "description": "FOUND.### folders created by chkdsk. They may contain recovered data – moved to the recycle bin.",
+      "descriptionDe": "Von chkdsk erstellte FOUND.###-Ordner. Sie können wiederhergestellte Daten enthalten – werden in den Papierkorb verschoben.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%SystemDrive%\\found.*",
+          "pattern": "*.chk",
+          "recursive": true
+        }
+      ],
+      "deleteMode": "RecycleBin"
+    },
+    {
+      "id": "sys.recyclebin",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Recycle bin",
+      "nameDe": "Papierkorb",
+      "description": "Empties the recycle bin of all drives.",
+      "descriptionDe": "Leert den Papierkorb aller Laufwerke.",
+      "risk": "Moderate",
+      "selected": false,
+      "action": "EmptyRecycleBin"
+    },
+    {
+      "id": "sys.dism.cleanup",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Component store cleanup (DISM)",
+      "nameDe": "Komponentenspeicher bereinigen (DISM)",
+      "description": "Removes superseded Windows components with DISM /StartComponentCleanup. Takes several minutes.",
+      "descriptionDe": "Entfernt ersetzte Windows-Komponenten mit DISM /StartComponentCleanup. Dauert mehrere Minuten.",
+      "risk": "Moderate",
+      "selected": false,
+      "action": "DismComponentCleanup"
+    },
+    {
+      "id": "sys.dism.resetbase",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Reset component base (DISM)",
+      "nameDe": "Komponentenbasis zurücksetzen (DISM)",
+      "description": "DISM /StartComponentCleanup /ResetBase: frees more space in WinSxS.",
+      "descriptionDe": "DISM /StartComponentCleanup /ResetBase: gibt mehr Platz in WinSxS frei.",
+      "risk": "Deep",
+      "selected": false,
+      "action": "DismResetBase",
+      "warning": "Installed updates can no longer be uninstalled afterwards.",
+      "warningDe": "Installierte Updates lassen sich danach nicht mehr deinstallieren.",
+      "expert": true
+    },
+    {
+      "id": "sys.windowsold",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Previous Windows installation",
+      "nameDe": "Vorherige Windows-Installation",
+      "description": "Removes C:\\Windows.old left over after a feature update or upgrade.",
+      "descriptionDe": "Entfernt C:\\Windows.old, das nach einem Funktionsupdate oder Upgrade übrig bleibt.",
+      "risk": "Deep",
+      "selected": false,
+      "action": "RemoveWindowsOld",
+      "warning": "Going back to the previous Windows version is no longer possible.",
+      "warningDe": "Eine Rückkehr zur vorherigen Windows-Version ist danach nicht mehr möglich."
+    },
+    {
+      "id": "sys.eventlogs",
+      "category": "Windows",
+      "categoryDe": "Windows",
+      "name": "Event logs",
+      "nameDe": "Ereignisprotokolle",
+      "description": "Backs up the Application, System, Setup and Windows PowerShell logs as .evtx (backups folder) and clears them.",
+      "descriptionDe": "Sichert die Protokolle Anwendung, System, Setup und Windows PowerShell als .evtx (Sicherungsordner) und leert sie.",
+      "risk": "Deep",
+      "selected": false,
+      "action": "ClearEventLogs",
+      "warning": "Event history used for troubleshooting starts over (a backup is kept).",
+      "warningDe": "Der Ereignisverlauf für die Fehlersuche beginnt neu (eine Sicherung bleibt erhalten).",
+      "expert": true
+    },
+    {
+      "id": "privacy.recent",
+      "category": "Privacy",
+      "categoryDe": "Datenschutz",
+      "name": "Recent items",
+      "nameDe": "Zuletzt verwendete Elemente",
+      "description": "Shortcuts to recently opened files and folders (Quick access “Recent”). The files themselves stay.",
+      "descriptionDe": "Verknüpfungen zu zuletzt geöffneten Dateien und Ordnern (Schnellzugriff „Zuletzt verwendet“). Die Dateien selbst bleiben.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%AppData%\\Microsoft\\Windows\\Recent",
+          "pattern": "*.lnk",
+          "recursive": false
+        }
+      ]
+    },
+    {
+      "id": "privacy.jumplists",
+      "category": "Privacy",
+      "categoryDe": "Datenschutz",
+      "name": "Jump lists",
+      "nameDe": "Sprunglisten",
+      "description": "Recent files in the taskbar and Start jump lists.",
+      "descriptionDe": "Zuletzt verwendete Dateien in den Sprunglisten von Taskleiste und Start.",
+      "risk": "Deep",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%AppData%\\Microsoft\\Windows\\Recent\\AutomaticDestinations",
+          "pattern": "*.automaticDestinations-ms",
+          "recursive": false
+        },
+        {
+          "path": "%AppData%\\Microsoft\\Windows\\Recent\\CustomDestinations",
+          "pattern": "*.customDestinations-ms",
+          "recursive": false
+        }
+      ],
+      "warning": "Items pinned in jump lists are removed as well.",
+      "warningDe": "An Sprunglisten angeheftete Elemente werden ebenfalls entfernt."
+    },
+    {
+      "id": "privacy.office",
+      "category": "Privacy",
+      "categoryDe": "Datenschutz",
+      "name": "Office recent documents",
+      "nameDe": "Zuletzt verwendete Office-Dokumente",
+      "description": "Shortcut list of recently opened Office documents.",
+      "descriptionDe": "Verknüpfungsliste zuletzt geöffneter Office-Dokumente.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%AppData%\\Microsoft\\Office\\Recent",
+          "pattern": "*.lnk;*.url",
+          "recursive": false
+        }
+      ],
+      "detect": [
+        "%AppData%\\Microsoft\\Office\\Recent"
+      ]
+    },
+    {
+      "id": "privacy.clipboard",
+      "category": "Privacy",
+      "categoryDe": "Datenschutz",
+      "name": "Clipboard history",
+      "nameDe": "Zwischenablage-Verlauf",
+      "description": "Clears the Windows clipboard history (Win+V). Pinned clipboard items stay.",
+      "descriptionDe": "Leert den Zwischenablage-Verlauf von Windows (Win+V). Angeheftete Einträge bleiben.",
+      "risk": "Moderate",
+      "selected": false,
+      "action": "ClearClipboardHistory"
+    },
+    {
+      "id": "media.d3dscache",
+      "category": "Multimedia & GPU",
+      "categoryDe": "Multimedia & GPU",
+      "name": "DirectX shader cache",
+      "nameDe": "DirectX-Shader-Cache",
+      "description": "Compiled shaders; rebuilt by games and apps (first start may stutter briefly).",
+      "descriptionDe": "Kompilierte Shader; werden von Spielen und Apps neu erstellt (erster Start kann kurz ruckeln).",
+      "risk": "Safe",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\D3DSCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ]
+    },
+    {
+      "id": "media.nvidia",
+      "category": "Multimedia & GPU",
+      "categoryDe": "Multimedia & GPU",
+      "name": "NVIDIA shader cache",
+      "nameDe": "NVIDIA-Shader-Cache",
+      "description": "DirectX, OpenGL and driver shader caches of NVIDIA graphics.",
+      "descriptionDe": "DirectX-, OpenGL- und Treiber-Shader-Caches von NVIDIA-Grafik.",
+      "risk": "Safe",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\NVIDIA\\DXCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\NVIDIA\\GLCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%ProgramData%\\NVIDIA Corporation\\NV_Cache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\NVIDIA",
+        "%ProgramData%\\NVIDIA Corporation"
+      ]
+    },
+    {
+      "id": "media.amd",
+      "category": "Multimedia & GPU",
+      "categoryDe": "Multimedia & GPU",
+      "name": "AMD shader cache",
+      "nameDe": "AMD-Shader-Cache",
+      "description": "DirectX, OpenGL and Vulkan shader caches of AMD graphics.",
+      "descriptionDe": "DirectX-, OpenGL- und Vulkan-Shader-Caches von AMD-Grafik.",
+      "risk": "Safe",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\AMD\\DxCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\AMD\\DxcCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\AMD\\GLCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\AMD\\VkCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\AMD"
+      ]
+    },
+    {
+      "id": "media.intel",
+      "category": "Multimedia & GPU",
+      "categoryDe": "Multimedia & GPU",
+      "name": "Intel shader cache",
+      "nameDe": "Intel-Shader-Cache",
+      "description": "Shader cache of Intel graphics.",
+      "descriptionDe": "Shader-Cache von Intel-Grafik.",
+      "risk": "Safe",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalLowAppData%\\Intel\\ShaderCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalLowAppData%\\Intel\\ShaderCache"
+      ]
+    },
+    {
+      "id": "media.spotify",
+      "category": "Multimedia & GPU",
+      "categoryDe": "Multimedia & GPU",
+      "name": "Spotify cache",
+      "nameDe": "Spotify-Cache",
+      "description": "Streaming cache of Spotify. Offline downloads may have to be downloaded again.",
+      "descriptionDe": "Streaming-Cache von Spotify. Offline-Downloads müssen ggf. neu geladen werden.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Spotify\\Data",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Spotify\\Browser\\Cache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Spotify"
+      ],
+      "processes": [
+        "Spotify"
+      ]
+    },
+    {
+      "id": "media.adobe",
+      "category": "Multimedia & GPU",
+      "categoryDe": "Multimedia & GPU",
+      "name": "Adobe media cache",
+      "nameDe": "Adobe-Mediencache",
+      "description": "Media cache and peak files of Premiere Pro, After Effects and Media Encoder.",
+      "descriptionDe": "Mediencache und Peak-Dateien von Premiere Pro, After Effects und Media Encoder.",
+      "risk": "Moderate",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%AppData%\\Adobe\\Common\\Media Cache Files",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Adobe\\Common\\Media Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Adobe\\Common\\Peak Files",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%AppData%\\Adobe\\Common"
+      ],
+      "processes": [
+        "Adobe Premiere Pro",
+        "AfterFX",
+        "Adobe Media Encoder"
+      ]
+    },
+    {
+      "id": "app.teams",
+      "category": "Applications",
+      "categoryDe": "Anwendungen",
+      "name": "Microsoft Teams cache",
+      "nameDe": "Microsoft-Teams-Cache",
+      "description": "Web caches of classic and new Teams. Teams must be closed.",
+      "descriptionDe": "Web-Caches von klassischem und neuem Teams. Teams muss geschlossen sein.",
+      "risk": "Safe",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%AppData%\\Microsoft\\Teams\\Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Microsoft\\Teams\\Code Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Microsoft\\Teams\\GPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Packages\\MSTeams_8wekyb3d8bbwe\\LocalCache\\Microsoft\\MSTeams\\EBWebView\\*\\Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Packages\\MSTeams_8wekyb3d8bbwe\\LocalCache\\Microsoft\\MSTeams\\EBWebView\\*\\Code Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%LocalAppData%\\Packages\\MSTeams_8wekyb3d8bbwe\\LocalCache\\Microsoft\\MSTeams\\EBWebView\\*\\GPUCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%AppData%\\Microsoft\\Teams",
+        "%LocalAppData%\\Packages\\MSTeams_8wekyb3d8bbwe"
+      ],
+      "processes": [
+        "ms-teams",
+        "Teams"
+      ]
+    },
+    {
+      "id": "app.discord",
+      "category": "Applications",
+      "categoryDe": "Anwendungen",
+      "name": "Discord cache",
+      "nameDe": "Discord-Cache",
+      "description": "Web caches of Discord.",
+      "descriptionDe": "Web-Caches von Discord.",
+      "risk": "Safe",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%AppData%\\discord\\Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\discord\\Code Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\discord\\GPUCache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%AppData%\\discord"
+      ],
+      "processes": [
+        "Discord"
+      ]
+    },
+    {
+      "id": "app.slack",
+      "category": "Applications",
+      "categoryDe": "Anwendungen",
+      "name": "Slack cache",
+      "nameDe": "Slack-Cache",
+      "description": "Web caches of Slack.",
+      "descriptionDe": "Web-Caches von Slack.",
+      "risk": "Safe",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%AppData%\\Slack\\Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Slack\\Code Cache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Slack\\GPUCache",
+          "pattern": "*",
+          "recursive": true
+        },
+        {
+          "path": "%AppData%\\Slack\\Service Worker\\CacheStorage",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%AppData%\\Slack"
+      ],
+      "processes": [
+        "slack"
+      ]
+    },
+    {
+      "id": "app.steam",
+      "category": "Applications",
+      "categoryDe": "Anwendungen",
+      "name": "Steam web cache",
+      "nameDe": "Steam-Web-Cache",
+      "description": "Browser cache of the Steam client.",
+      "descriptionDe": "Browser-Cache des Steam-Clients.",
+      "risk": "Safe",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Steam\\htmlcache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Steam"
+      ],
+      "processes": [
+        "steam",
+        "steamwebhelper"
+      ]
+    },
+    {
+      "id": "app.onedrive.logs",
+      "category": "Applications",
+      "categoryDe": "Anwendungen",
+      "name": "OneDrive logs",
+      "nameDe": "OneDrive-Protokolle",
+      "description": "Log files of the OneDrive client (no synced files).",
+      "descriptionDe": "Protokolldateien des OneDrive-Clients (keine synchronisierten Dateien).",
+      "risk": "Safe",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalAppData%\\Microsoft\\OneDrive\\logs",
+          "pattern": "*",
+          "recursive": true,
+          "minAgeHours": 72
+        }
+      ],
+      "detect": [
+        "%LocalAppData%\\Microsoft\\OneDrive\\logs"
+      ]
+    },
+    {
+      "id": "app.java",
+      "category": "Applications",
+      "categoryDe": "Anwendungen",
+      "name": "Java cache",
+      "nameDe": "Java-Cache",
+      "description": "Java Web Start and applet cache.",
+      "descriptionDe": "Cache von Java Web Start und Applets.",
+      "risk": "Safe",
+      "selected": false,
+      "targets": [
+        {
+          "path": "%LocalLowAppData%\\Sun\\Java\\Deployment\\cache",
+          "pattern": "*",
+          "recursive": true
+        }
+      ],
+      "detect": [
+        "%LocalLowAppData%\\Sun\\Java\\Deployment\\cache"
+      ]
+    }
+  ]
+}
